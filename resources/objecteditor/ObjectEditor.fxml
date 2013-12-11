@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="393.0" prefWidth="681.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="de.perdoctus.starbound.objecteditor.gui.ObjectEditorCtrl">
+  <children>
+    <BorderPane prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <center>
+        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+          <tabs>
+            <Tab text="Object Information">
+              <content>
+                <AnchorPane id="AnchorPane" prefHeight="529.0" prefWidth="678.0">
+                  <children>
+                    <GridPane prefHeight="-1.0" prefWidth="-1.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+                      <children>
+                        <Label text="Object Name (id)" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                          <tooltip>
+                            <Tooltip text="Empty Tooltip" />
+                          </tooltip>
+                        </Label>
+                        <Label text="Category" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label text="Price (pixels)" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <TextField id="objectName" fx:id="txtObjectName" onAction="#foo" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="comboCategory" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                          <items>
+                            <FXCollections fx:factory="observableArrayList">
+                              <String fx:value="Item 1" />
+                              <String fx:value="Item 2" />
+                              <String fx:value="Item 3" />
+                            </FXCollections>
+                          </items>
+                        </ComboBox>
+                        <TextField fx:id="txtPrice" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label text="Race" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                        <ComboBox fx:id="comboRace" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                          <items>
+                            <FXCollections fx:factory="observableArrayList">
+                              <String fx:value="Item 1" />
+                              <String fx:value="Item 2" />
+                              <String fx:value="Item 3" />
+                            </FXCollections>
+                          </items>
+                        </ComboBox>
+                        <Label text="Short Description" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtShortDescription" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Rarity" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <ComboBox fx:id="comboRarity" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                          <items>
+                            <FXCollections fx:factory="observableArrayList">
+                              <String fx:value="Item 1" />
+                              <String fx:value="Item 2" />
+                              <String fx:value="Item 3" />
+                            </FXCollections>
+                          </items>
+                        </ComboBox>
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="155.0" minWidth="10.0" prefWidth="111.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="210.0" minWidth="10.0" prefWidth="200.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
+                    <Separator layoutX="339.0" orientation="VERTICAL" prefHeight="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                    <GridPane prefWidth="311.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                      <children>
+                        <Label text="Description (General)" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <Label text="Description (Apex)" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label text="Description (Avian)" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label text="Description (Floran)" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <Label text="Description (Glitch)" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <Label text="Description (Human)" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                        <Label text="Description (Hylotl)" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                        <TextField id="txtGeneralDescription" fx:id="txtDescriptionGeneral" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <TextField id="txtApexDescription" fx:id="txtDescriptionApex" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtDescriptionAvian" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtDescriptionFloran" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="txtDescriptionGlitch" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <TextField fx:id="txtDescriptionHuman" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <TextField fx:id="txtDescriptionHylotl" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="155.0" minWidth="10.0" prefWidth="123.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="199.0" minWidth="10.0" prefWidth="188.0" />
+                      </columnConstraints>
+                      <padding>
+                        <Insets />
+                      </padding>
+                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
+                  </children>
+                </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Frames Definition">
+              <content>
+                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="376.0" prefWidth="600.0">
+                  <children>
+                    <Label layoutY="59.0" text="Frame Size" AnchorPane.leftAnchor="10.0" />
+                    <TextField fx:id="txtFrameSizeX" layoutX="154.0" layoutY="56.0" prefWidth="40.0" promptText="Width" />
+                    <TextField fx:id="txtFrameSizeY" layoutX="213.0" layoutY="56.0" prefWidth="40.0" promptText="Height" />
+                    <Label layoutX="201.0" layoutY="59.0" text="x" />
+                    <Label layoutY="85.0" text="Animation Dimensions" AnchorPane.leftAnchor="10.0" />
+                    <TextField fx:id="txtAnimationDimensionsX" layoutX="154.0" layoutY="82.0" prefWidth="40.0" />
+                    <TextField fx:id="txtAnimationDimensionsY" layoutX="213.0" layoutY="82.0" prefWidth="40.0" />
+                    <Label layoutX="201.0" layoutY="85.0" text="x" />
+                    <Label layoutY="111.0" text="Frame Names" AnchorPane.leftAnchor="10.0" />
+                    <TableView layoutX="154.0" layoutY="111.0" prefHeight="179.0" prefWidth="132.0">
+                      <columns>
+                        <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="45.0" text="Frame" />
+                        <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="84.0" text="Name" fx:id="tableFrameNames" />
+                      </columns>
+                    </TableView>
+                    <Label layoutY="14.0" text="Object Image Source" AnchorPane.leftAnchor="10.0" />
+                    <TextField fx:id="txtFilePath" layoutY="31.0" prefWidth="276.0" AnchorPane.leftAnchor="10.0" />
+                    <Button layoutX="286.0" layoutY="32.0" mnemonicParsing="false" onAction="#loadImage" text="..." />
+                    <Label fx:id="lblImageSize" layoutX="327.0" layoutY="292.0" text="" />
+                    <ScrollPane fx:id="imageScrollPane" layoutX="327.0" layoutY="32.0" pannable="false" prefHeight="185.06549072265625" prefWidth="336.0">
+                      <content>
+                        <ImageView fx:id="imageAnimation" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                      </content>
+                    </ScrollPane>
+                    <Slider fx:id="sliderImageZoom" layoutX="505.0" layoutY="220.0" majorTickUnit="5.0" max="10.0" min="1.0" minorTickCount="1" prefWidth="158.0" showTickLabels="false" showTickMarks="true" snapToTicks="true" />
+                  </children>
+                </AnchorPane>
+              </content>
+            </Tab>
+          </tabs>
+        </TabPane>
+      </center>
+      <top>
+        <MenuBar>
+          <menus>
+            <Menu mnemonicParsing="false" text="File">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Save" />
+              </items>
+            </Menu>
+          </menus>
+        </MenuBar>
+      </top>
+    </BorderPane>
+  </children>
+</AnchorPane>

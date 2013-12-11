@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:controller="de.perdoctus.starbound.codexEditor.CodexEditorController" id="Content" minHeight="0.0" minWidth="0.0" prefHeight="538.0" prefWidth="846.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <VBox id="VBox" alignment="TOP_LEFT" prefHeight="530.0" prefWidth="789.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+      <children>
+        <GridPane maxWidth="1.7976931348623157E308">
+          <children>
+            <Label text="%codex.id" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label text="%codex.title" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="txtCodexId" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <TextField fx:id="txtCodexTitle" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="389.0" minWidth="10.0" prefWidth="101.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="738.0" minWidth="10.0" prefWidth="678.0" />
+          </columnConstraints>
+          <padding>
+            <Insets />
+          </padding>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+        <VBox prefHeight="-1.0" prefWidth="100.0">
+          <children>
+            <Label text="%codex.pages" />
+            <HBox id="HBox" alignment="TOP_LEFT" spacing="5.0">
+              <children>
+                <ListView fx:id="lstPages" editable="true" prefHeight="-1.0" prefWidth="200.0">
+                  <contextMenu>
+                    <ContextMenu>
+                      <items>
+                        <MenuItem mnemonicParsing="false" onAction="#addCodexPage" text="%codex.pages.add" fx:id="mnuAddPage" />
+                        <MenuItem mnemonicParsing="false" onAction="#removeCodexPage" text="%codex.pages.remove" fx:id="mnuDeletePage" />
+                      </items>
+                    </ContextMenu>
+                  </contextMenu>
+                </ListView>
+                <TextArea fx:id="txtPageContent" prefWidth="-1.0" wrapText="true" />
+              </children>
+            </HBox>
+          </children>
+        </VBox>
+      </children>
+    </VBox>
+  </children>
+</AnchorPane>
