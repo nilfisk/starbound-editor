@@ -2,6 +2,7 @@
 
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.input.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="de.perdoctus.starbound.base.MainViewController">
@@ -28,11 +29,31 @@
           <menus>
             <Menu mnemonicParsing="false" text="File">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#showOpenFileDialog" text="Open" />
-                <MenuItem mnemonicParsing="false" text="Save" />
-                <MenuItem mnemonicParsing="false" text="Save All" />
-                <MenuItem mnemonicParsing="false" text="Close" />
-                <MenuItem mnemonicParsing="false" text="Close All" />
+                <MenuItem mnemonicParsing="false" onAction="#showOpenFileDialog" text="Open">
+                  <accelerator>
+                    <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                  </accelerator>
+                </MenuItem>
+                <MenuItem disable="true" mnemonicParsing="false" onAction="#saveActiveEditor" text="Save" fx:id="mnuSave">
+                  <accelerator>
+                    <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                  </accelerator>
+                </MenuItem>
+                <MenuItem disable="true" mnemonicParsing="false" text="Save All">
+                  <accelerator>
+                    <KeyCodeCombination alt="DOWN" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                  </accelerator>
+                </MenuItem>
+                <MenuItem disable="true" mnemonicParsing="false" text="Close" fx:id="mnuClose" onAction="#closeActiveEditor">
+                  <accelerator>
+                    <KeyCodeCombination alt="UP" code="W" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                  </accelerator>
+                </MenuItem>
+                <MenuItem disable="true" mnemonicParsing="false" text="Close All">
+                  <accelerator>
+                    <KeyCodeCombination alt="DOWN" code="W" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                  </accelerator>
+                </MenuItem>
               </items>
             </Menu>
           </menus>

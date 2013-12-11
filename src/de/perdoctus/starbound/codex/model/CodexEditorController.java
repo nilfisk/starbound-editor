@@ -1,6 +1,5 @@
-package de.perdoctus.starbound.codexEditor.model;
+package de.perdoctus.starbound.codex.model;
 
-import de.perdoctus.starbound.codexEditor.model.JsonFile;
 import de.perdoctus.starbound.types.codexEditor.Codex;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;

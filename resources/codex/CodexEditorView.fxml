@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:controller="de.perdoctus.starbound.codexEditor.CodexEditorController" id="Content" minHeight="0.0" minWidth="0.0" prefHeight="538.0" prefWidth="846.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<AnchorPane fx:controller="de.perdoctus.starbound.codex.CodexEditorController" id="Content" minHeight="0.0" minWidth="0.0" prefHeight="538.0" prefWidth="846.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
     <VBox id="VBox" alignment="TOP_LEFT" prefHeight="530.0" prefWidth="789.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
       <children>

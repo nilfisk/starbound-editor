@@ -2,6 +2,8 @@ package de.perdoctus.starbound.base;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -11,7 +13,7 @@ import java.io.IOException;
 /**
  * @author Christoph Giesche
  */
-public abstract class EditorController<M> {
+public abstract class EditorController<M> implements ChangeListener {
 
 	private BooleanProperty dirty = new SimpleBooleanProperty(false);
 	private File modelFile;
@@ -30,18 +32,22 @@ public abstract class EditorController<M> {
 		return dirty;
 	}
 
-
 	public void load(final File file) throws IOException {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.getJsonFactory().configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+
+		final M oldModel = getModel();
+
 		this.model = objectMapper.readValue(file, getModelClass());
 		this.modelFile = file;
 
-		updateView();
+		modelChanged(oldModel, getModel());
+		setDirty(false);
 	}
 
 	public void save() throws IOException {
 		save(modelFile);
+		setDirty(false);
 	}
 
 	public void save(final File file) throws IOException {
@@ -64,6 +70,13 @@ public abstract class EditorController<M> {
 		this.dirty.set(dirty);
 	}
 
+	@Override
+	public void changed(final ObservableValue observableValue, final Object o, final Object o2) {
+		if (!isDirty()) {
+			setDirty(true);
+		}
+	}
+
 	/**
 	 * @return The model.
 	 */
@@ -77,14 +90,10 @@ public abstract class EditorController<M> {
 	protected abstract Class<M> getModelClass();
 
 	/**
-	 * Is called when the controller should update the model.
-	 * May be ignored in case of direct data binding between model and view.
+	 * Is called when the model-instance changes.
+	 *
+	 * @param oldModel The old model. May be null.
+	 * @param newModel The new model.
 	 */
-	protected abstract void updateModel();
-
-	/**
-	 * Is called when the model has changed and the controller should update the view.
-	 * May be ignored in case of direct data binding between model and view.
-	 */
-	protected abstract void updateView();
+	protected abstract void modelChanged(M oldModel, M newModel);
 }

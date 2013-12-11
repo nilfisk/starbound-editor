@@ -1,4 +1,4 @@
-package de.perdoctus.starbound.codexEditor.model;
+package de.perdoctus.starbound.codex.model;
 
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
