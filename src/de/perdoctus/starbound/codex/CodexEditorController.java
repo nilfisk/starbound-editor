@@ -1,11 +1,13 @@
 package de.perdoctus.starbound.codex;
 
-import de.perdoctus.starbound.base.EditorController;
-import de.perdoctus.starbound.types.codexEditor.Codex;
+import de.perdoctus.starbound.base.DefaultController;
+import de.perdoctus.starbound.types.codex.Codex;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.util.Callback;
@@ -13,7 +15,7 @@ import javafx.util.Callback;
 /**
  * @author Christoph Giesche
  */
-public class CodexEditorController extends EditorController<Codex> {
+public class CodexEditorController extends DefaultController<Codex> {
 
 	public MenuItem mnuAddPage;
 	public MenuItem mnuDeletePage;
@@ -42,15 +44,8 @@ public class CodexEditorController extends EditorController<Codex> {
 					protected void updateItem(final StringProperty item, final boolean empty) {
 						super.updateItem(item, empty);
 						if (item != null) {
-							final String format;
-							if (item.get().length() > 40) {
-								format = "%.40s [...]";
-							} else {
-								format = "%s";
-							}
-							textProperty().bind(Bindings.format(format, item));
+							setText("Page " + (getIndex() + 1));
 						} else {
-							textProperty().unbind();
 							setText("");
 						}
 					}
@@ -93,10 +88,15 @@ public class CodexEditorController extends EditorController<Codex> {
 	}
 
 	public void addCodexPage(ActionEvent actionEvent) {
-
+		lstPages.getItems().add(new SimpleStringProperty());
+		setDirty(true);
 	}
 
 	public void removeCodexPage(ActionEvent actionEvent) {
-
+		final ObservableList<StringProperty> selectedItems = lstPages.getSelectionModel().getSelectedItems();
+		for (StringProperty selectedItem : selectedItems) {
+			lstPages.getItems().remove(selectedItem);
+		}
+		setDirty(true);
 	}
 }

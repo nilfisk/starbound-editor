@@ -1,4 +1,4 @@
-package de.perdoctus.starbound.types.codexEditor;
+package de.perdoctus.starbound.types.codex;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;

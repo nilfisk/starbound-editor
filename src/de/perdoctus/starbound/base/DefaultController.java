@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * @author Christoph Giesche
  */
-public abstract class EditorController<M> implements ChangeListener {
+public abstract class DefaultController<M> implements ChangeListener {
 
 	private BooleanProperty dirty = new SimpleBooleanProperty(false);
 	private File modelFile;
@@ -21,39 +21,53 @@ public abstract class EditorController<M> implements ChangeListener {
 
 	/**
 	 * Creates a new instance of the Controller.
-	 *
-	 * @throws Exception When creating a new Instance of the model type fails.
 	 */
-	public EditorController() throws Exception {
-		model = getModelClass().newInstance();
+	public DefaultController() {
+		try {
+			model = getModelClass().newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public BooleanProperty dirtyProperty() {
 		return dirty;
 	}
 
-	public void load(final File file) throws IOException {
+	public void load(final File file) {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.getJsonFactory().configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
 
 		final M oldModel = getModel();
 
-		this.model = objectMapper.readValue(file, getModelClass());
+		try {
+			this.model = objectMapper.readValue(file, getModelClass());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		this.modelFile = file;
 
 		modelChanged(oldModel, getModel());
 		setDirty(false);
 	}
 
-	public void save() throws IOException {
+	public void save() {
 		save(modelFile);
 		setDirty(false);
 	}
 
-	public void save(final File file) throws IOException {
+	public void save(final File file) {
 		final ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.writeValue(file, model);
+		try {
+			objectMapper.writeValue(file, model);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		this.modelFile = file;
+	}
+
+	public File getModelFile() {
+		return modelFile;
 	}
 
 	/**

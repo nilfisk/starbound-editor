@@ -1,4 +1,4 @@
-package de.perdoctus.starbound.types.codexEditor;
+package de.perdoctus.starbound.types.codex;
 
 import de.perdoctus.starbound.types.common.Rarity;
 

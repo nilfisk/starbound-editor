@@ -1,6 +1,6 @@
 package de.perdoctus.starbound.codex.model;
 
-import de.perdoctus.starbound.types.codexEditor.Codex;
+import de.perdoctus.starbound.types.codex.Codex;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
 import javafx.beans.property.SimpleStringProperty;

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.input.*?>
 <?import javafx.scene.layout.*?>
@@ -9,21 +10,40 @@
   <children>
     <BorderPane prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <bottom>
-        <HBox prefWidth="200.0" spacing="5.0">
+        <HBox prefWidth="200.0" spacing="5.0" style="-fx-background-color: lightgrey;">
           <children>
-            <Label text="Status" />
-            <ProgressBar prefWidth="200.0" progress="0.0" />
+            <Label fx:id="lblStatus" text="Status" />
           </children>
+          <padding>
+            <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+          </padding>
+          <BorderPane.margin>
+            <Insets />
+          </BorderPane.margin>
         </HBox>
       </bottom>
       <center>
-        <SplitPane dividerPositions="0.2976588628762542" focusTraversable="true" prefHeight="160.0" prefWidth="200.0">
-          <items>
-            <ListView fx:id="lstFiles" prefHeight="200.0" prefWidth="200.0" />
-            <Pane fx:id="editorPane" prefHeight="200.0" prefWidth="200.0" />
-          </items>
-        </SplitPane>
+        <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" />
       </center>
+      <left>
+        <Accordion>
+          <expandedPane>
+            <TitledPane fx:id="x1" animated="false" text="untitled">
+              <content>
+                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </TitledPane>
+          </expandedPane>
+          <panes>
+            <TitledPane animated="false" text="untitled">
+              <content>
+                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </TitledPane>
+            <fx:reference source="x1" />
+          </panes>
+        </Accordion>
+      </left>
       <top>
         <MenuBar>
           <menus>
@@ -34,7 +54,7 @@
                     <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                   </accelerator>
                 </MenuItem>
-                <MenuItem disable="true" mnemonicParsing="false" onAction="#saveActiveEditor" text="Save" fx:id="mnuSave">
+                <MenuItem disable="true" mnemonicParsing="false" onAction="#saveCurrentEditorTab" text="Save" fx:id="mnuSave">
                   <accelerator>
                     <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                   </accelerator>
@@ -44,7 +64,7 @@
                     <KeyCodeCombination alt="DOWN" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                   </accelerator>
                 </MenuItem>
-                <MenuItem disable="true" mnemonicParsing="false" text="Close" fx:id="mnuClose" onAction="#closeActiveEditor">
+                <MenuItem disable="true" mnemonicParsing="false" onAction="#closeActiveEditor" text="Close" fx:id="mnuClose">
                   <accelerator>
                     <KeyCodeCombination alt="UP" code="W" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                   </accelerator>
@@ -54,8 +74,13 @@
                     <KeyCodeCombination alt="DOWN" code="W" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                   </accelerator>
                 </MenuItem>
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#mnuShowSettingsDialog" text="Settings ..." />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#exitApplication" text="Exit" />
               </items>
             </Menu>
+            <Menu mnemonicParsing="false" text="Mods" fx:id="mnuMods" />
           </menus>
         </MenuBar>
       </top>

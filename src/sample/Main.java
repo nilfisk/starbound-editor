@@ -1,5 +1,6 @@
 package sample;
 
+import de.perdoctus.starbound.base.MainViewController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,9 +13,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/codex/CodexEditorView.fxml"), ResourceBundle.getBundle("codex.te"));
-        primaryStage.setTitle("Starbound Codex Editor");
+	    FXMLLoader loader = new FXMLLoader(getClass().getResource("/base/MainView.fxml"), ResourceBundle.getBundle("base.base"));
+        Parent root = loader.load();
+	    MainViewController controller = loader.getController();
+        primaryStage.setTitle("Starbound Editor");
         primaryStage.setScene(new Scene(root));
+	    primaryStage.setOnShown(event -> controller.onShow());
         primaryStage.show();
     }
 

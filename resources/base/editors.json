@@ -1,0 +1,8 @@
+[
+    {
+        "fileSuffix": ".codex",
+        "editorFXML": "/codex/CodexEditorView.fxml",
+        "resourceBundle": "/codex/codex",
+        "assetGroup" : "BOOK"
+    }
+]
