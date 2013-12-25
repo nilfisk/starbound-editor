@@ -1,11 +1,12 @@
 package de.perdoctus.starbound.types.codex;
 
+import de.perdoctus.starbound.types.base.Asset;
 import de.perdoctus.starbound.types.common.Rarity;
 
 /**
  * @author Christoph Giesche
  */
-public class CodexItem {
+public class CodexItem extends Asset {
 	private String codexId;
 	private String title;
 	private String inventoryIcon;
@@ -99,5 +100,20 @@ public class CodexItem {
 				", description='" + description + '\'' +
 				", shortdescription='" + shortdescription + '\'' +
 				'}';
+	}
+
+	@Override
+	public String assetTitle() {
+		return getTitle() + " (" + getCodexId() + ')';
+	}
+
+	@Override
+	public String assetId() {
+		return null;
+	}
+
+	@Override
+	public String iconImage() {
+		return null;
 	}
 }

@@ -26,23 +26,7 @@
         <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" />
       </center>
       <left>
-        <Accordion>
-          <expandedPane>
-            <TitledPane fx:id="x1" animated="false" text="untitled">
-              <content>
-                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
-            </TitledPane>
-          </expandedPane>
-          <panes>
-            <TitledPane animated="false" text="untitled">
-              <content>
-                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
-            </TitledPane>
-            <fx:reference source="x1" />
-          </panes>
-        </Accordion>
+        <Accordion fx:id="accAssetList" expandedPane="$null" />
       </left>
       <top>
         <MenuBar>

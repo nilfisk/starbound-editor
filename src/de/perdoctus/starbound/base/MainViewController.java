@@ -2,20 +2,19 @@ package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.base.dialogs.ProgressDialog;
 import de.perdoctus.starbound.base.dialogs.SettingsDialog;
+import de.perdoctus.starbound.codex.CodexEditor;
 import de.perdoctus.starbound.types.base.Asset;
 import de.perdoctus.starbound.types.base.EditorType;
 import de.perdoctus.starbound.types.base.Mod;
 import de.perdoctus.starbound.types.base.Settings;
+import de.perdoctus.starbound.types.codex.Codex;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.stage.FileChooser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.controlsfx.control.action.Action;
@@ -24,11 +23,10 @@ import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Logger;
-
-import static org.controlsfx.dialog.Dialog.Actions.CANCEL;
-import static org.controlsfx.dialog.Dialog.Actions.YES;
 
 /**
  * @author Christoph Giesche
@@ -38,6 +36,9 @@ public class MainViewController {
 	public static final String ASSETS_FOLDER = "assets";
 	private final static Logger log = Logger.getLogger(MainViewController.class.getName());
 	private static final File SETTINGS_FILE = new File(System.getProperty("user.home") + File.separatorChar + "perdoctus-sb-editor.json");
+
+	@FXML
+	private Accordion accAssetList;
 	@FXML
 	private Label lblStatus;
 	@FXML
@@ -53,13 +54,39 @@ public class MainViewController {
 	private Settings settings;
 	private ObjectProperty<Mod> activeMod = new SimpleObjectProperty<>();
 	private List<EditorType> availableEditors;
+	private AssetAccordionCtrl accordionCtrl;
 
 	public void initialize() throws Exception {
 		tabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
 		mnuSave.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 		lblStatus.textProperty().bind(Bindings.concat("Active mod: ", activeMod));
+		accordionCtrl = new AssetAccordionCtrl(accAssetList);
+		accordionCtrl.setOnAssetSelected(asset -> openEditor(asset));
 
 		this.availableEditors = readEditorTypes();
+	}
+
+	private Void openEditor(final Asset asset) {
+		final Tab editorTab = new Tab(asset.getAssetFile().getName());
+
+		final Constructor constructor;
+		final AssetEditor assetEditor;
+		try {
+			final Class editorClass = Class.forName(asset.getEditorType().getEditorClass());
+			final Class assetClass = Class.forName(asset.getEditorType().getAssetClass());
+			constructor = editorClass.getConstructor(assetClass);
+
+			final Object castedAsset = assetClass.cast(asset);
+			assetEditor = (AssetEditor) constructor.newInstance(castedAsset);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		editorTab.setContent(assetEditor);
+		tabPane.getTabs().add(editorTab);
+		tabPane.getSelectionModel().select(editorTab);
+
+		return null;
 	}
 
 	private List<EditorType> readEditorTypes() {
@@ -81,7 +108,7 @@ public class MainViewController {
 		reloadSettings();
 	}
 
-	private void parseModsFolder() {
+	private void refreshModList() {
 		final ModsScanTask modsScanTask = new ModsScanTask(new File(settings.getStarboundHome() + File.separatorChar + "mods"));
 		modsScanTask.setOnSucceeded(event -> modsChanged(modsScanTask.getValue()));
 
@@ -149,7 +176,7 @@ public class MainViewController {
 
 	private void settingsLoaded() {
 		rescanCoreAssetsDirectory();
-		parseModsFolder();
+		refreshModList();
 	}
 
 	private void forceSettings() {
@@ -161,66 +188,12 @@ public class MainViewController {
 		}
 	}
 
-	private void createEditorTab(final File file) throws IOException {
-		if (file.getName().endsWith(".codex")) {
-			final FXMLLoader loader = new FXMLLoader(getClass().getResource("/codex/CodexEditorView.fxml"), ResourceBundle.getBundle("codex.codex"));
-			final Node editorView = loader.load();
-			final DefaultController controller = loader.getController();
-			controller.load(file);
-
-			final Tab tab = new Tab();
-			tab.textProperty().bind(Bindings.concat(file.getName(), " ", controller.dirtyProperty()));
-			tab.setContent(editorView);
-
-			tab.setClosable(true);
-			tab.setOnCloseRequest(event -> {
-				if (controller.isDirty()) {
-					final Action action = Dialogs.create().owner(tab.getTabPane().getScene().getWindow()).title("%save").message("%savemessage").showConfirm();
-
-					if (action == YES) {
-						controller.save();
-					} else if (action == CANCEL) {
-						event.consume();
-					}
-				}
-			});
-
-			tab.setOnClosed(event -> {
-				tabEditorControllers.remove(tab);
-			});
-
-			tabPane.getTabs().add(tab);
-			tabEditorControllers.put(tab, controller);
-		}
-	}
-
 	public void showOpenFileDialog(ActionEvent actionEvent) {
-		final FileChooser fileChooser = new FileChooser();
-		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Supported Statbound Data File", "*.codex"));
-		final List<File> selectedFiles = fileChooser.showOpenMultipleDialog(tabPane.getScene().getWindow());
-
-		if (selectedFiles != null) {
-			try {
-				openEditorTabs(selectedFiles);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
+		// jojo
 	}
 
-	private void openEditorTabs(final List<File> selectedFiles) throws IOException {
-		for (File selectedFile : selectedFiles) {
-			openEditorTab(selectedFile);
-		}
-	}
-
-	private void openEditorTab(final File selectedFile) throws IOException {
-		createEditorTab(selectedFile);
-	}
 
 	public void saveCurrentEditorTab(ActionEvent actionEvent) {
-
 		final Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
 		if (currentTab != null) {
 			tabEditorControllers.get(currentTab).save();
@@ -256,15 +229,15 @@ public class MainViewController {
 	}
 
 	private void availableCoreAssetsChanged(final List<Asset> coreAssets) {
-		for (Asset coreAsset : coreAssets) {
-			System.out.println(coreAsset);
+		for (Asset coreAssetInformation : coreAssets) {
+			System.out.println(coreAssetInformation);
 		}
-
+		accordionCtrl.updateView(coreAssets);
 	}
 
-	private void availableModAssetsChanged(final List<Asset> assets) {
-		for (Asset asset : assets) {
-			System.out.println(asset);
+	private void availableModAssetsChanged(final List<Asset> modAssets) {
+		for (Asset modAssetInformation : modAssets) {
+			System.out.println(modAssetInformation);
 		}
 	}
 

@@ -17,8 +17,8 @@ import java.util.logging.Logger;
  */
 public class ModsScanTask extends Task<List<Mod>> {
 
-	private final static Logger LOGGER = Logger.getLogger(ModsScanTask.class.getName());
 	public static final String MODINFO_EXTENSION = ".modinfo";
+	private final static Logger LOGGER = Logger.getLogger(ModsScanTask.class.getName());
 	private File modsDirectory;
 
 	public ModsScanTask(final File modsDirectory) {
@@ -28,15 +28,18 @@ public class ModsScanTask extends Task<List<Mod>> {
 	@Override
 	protected List<Mod> call() throws Exception {
 		final List<Mod> modList = new LinkedList<>();
-		updateTitle("Searching for installed Mods");
+		updateTitle("Searching for Mods");
 		final File[] files = modsDirectory.listFiles();
-		for (final File file : files) {
-			if (file.isDirectory()) {
-				try {
-					final Mod mod = readMod(file);
-					modList.add(mod);
-				} catch (IOException e) {
-					e.printStackTrace();
+		if (files != null) {
+			for (final File file : files) {
+				updateMessage(file.getAbsolutePath());
+				if (file.isDirectory()) {
+					try {
+						final Mod mod = readMod(file);
+						modList.add(mod);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

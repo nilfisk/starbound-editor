@@ -7,16 +7,28 @@ public class EditorType {
 
 	private String fileSuffix;
 	private String editorFXML;
+	private String editorClass;
 	private String resourceBundle;
 	private AssetGroup assetGroup;
+	private String assetClass;
 
 	public EditorType() {
 	}
 
-	public EditorType(final String fileSuffix, final String editorFXML, final String resourceBundle) {
-		this.fileSuffix = fileSuffix;
-		this.editorFXML = editorFXML;
-		this.resourceBundle = resourceBundle;
+	public String getEditorClass() {
+		return editorClass;
+	}
+
+	public void setEditorClass(final String editorClass) {
+		this.editorClass = editorClass;
+	}
+
+	public String getAssetClass() {
+		return assetClass;
+	}
+
+	public void setAssetClass(final String assetClass) {
+		this.assetClass = assetClass;
 	}
 
 	public String getFileSuffix() {
@@ -56,8 +68,10 @@ public class EditorType {
 		return "EditorType{" +
 				"fileSuffix='" + fileSuffix + '\'' +
 				", editorFXML='" + editorFXML + '\'' +
+				", editorClass='" + editorClass + '\'' +
 				", resourceBundle='" + resourceBundle + '\'' +
 				", assetGroup=" + assetGroup +
+				", assetClass='" + assetClass + '\'' +
 				'}';
 	}
 }

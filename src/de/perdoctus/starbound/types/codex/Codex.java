@@ -1,5 +1,6 @@
 package de.perdoctus.starbound.types.codex;
 
+import de.perdoctus.starbound.types.base.Asset;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author Christoph Giesche
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class Codex {
+public class Codex extends Asset {
 
 	private StringProperty id = new SimpleStringProperty();
 	private StringProperty title = new SimpleStringProperty();
@@ -68,4 +69,26 @@ public class Codex {
 		return contentPages;
 	}
 
+	@Override
+	public String assetTitle() {
+		final StringBuilder stringBuilder = new StringBuilder();
+		if (getTitle() != null) {
+			stringBuilder.append(getTitle());
+		} else {
+			//TODO: i18n
+			stringBuilder.append("Unnamed");
+		}
+		stringBuilder.append(" (").append(getId()).append(')');
+		return stringBuilder.toString();
+	}
+
+	@Override
+	public String assetId() {
+		return getId();
+	}
+
+	@Override
+	public String iconImage() {
+		return null;
+	}
 }

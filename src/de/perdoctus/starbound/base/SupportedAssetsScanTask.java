@@ -1,11 +1,13 @@
 package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
+import de.perdoctus.starbound.types.base.AssetManager;
 import de.perdoctus.starbound.types.base.EditorType;
 import de.perdoctus.starbound.types.base.utils.FileUtils;
 import javafx.concurrent.Task;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class SupportedAssetsScanTask extends Task<List<Asset>> {
 
 	private final File assetsFolder;
 	private final List<EditorType> editorTypes;
+	private final AssetManager assetManager;
 
 	/**
 	 * @param assetsFolder The folder, the scan will be start at.
@@ -26,6 +29,7 @@ public class SupportedAssetsScanTask extends Task<List<Asset>> {
 	public SupportedAssetsScanTask(final File assetsFolder, final List<EditorType> editorTypes) {
 		this.editorTypes = editorTypes;
 		this.assetsFolder = assetsFolder;
+		this.assetManager = new AssetManager(assetsFolder, editorTypes);
 	}
 
 	@Override
@@ -45,22 +49,17 @@ public class SupportedAssetsScanTask extends Task<List<Asset>> {
 			if (file.isDirectory()) {
 				result.addAll(scanDirectory(file));
 			} else {
-				final EditorType editorType = determineEditorType(file);
-				if (editorType != null) {
-					result.add(new Asset(editorType, assetsFolder, FileUtils.relativize(assetsFolder, file)));
+				if (assetManager.isKnown(file)) {
+					try {
+						result.add(assetManager.loadAsset(file));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
 		return result;
 	}
 
-	private EditorType determineEditorType(final File file) {
-		for (EditorType editorType: editorTypes){
-			if (file.isFile() && file.getName().endsWith(editorType.getFileSuffix())) {
-				return editorType;
-			}
-		}
-		return null;
-	}
 
 }

@@ -1,40 +1,46 @@
 package de.perdoctus.starbound.types.base;
 
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.File;
 
 /**
  * @author Christoph Giesche
  */
-public class Asset {
+public abstract class Asset {
 
-	private final EditorType editorType;
-	private final File baseDirectory;
-	private final String assetLocation;
+	private EditorType editorType;
+	private File assetFile;
 
-	public Asset(final EditorType editorType, final File baseDirectory, final String assetLocation) {
-		this.editorType = editorType;
-		this.baseDirectory = baseDirectory;
-		this.assetLocation = assetLocation;
-	}
+	/**
+	 * @return A human readable title for this asset.
+	 */
+	public abstract String assetTitle();
 
-	public File getBaseDirectory() {
-		return baseDirectory;
-	}
+	/**
+	 * @return The ID of this asset or {@null} if there is none.
+	 */
+	public abstract String assetId();
 
+	/**
+	 * @return The location of the icon image or {@code null}.
+	 */
+	public abstract String iconImage();
+
+	@XmlTransient
 	public EditorType getEditorType() {
 		return editorType;
 	}
 
-	public String getAssetLocation() {
-		return assetLocation;
+	public void setEditorType(final EditorType editorType) {
+		this.editorType = editorType;
 	}
 
-	@Override
-	public String  toString() {
-		return "Asset{" +
-				"editorType=" + editorType +
-				", baseDirectory=" + baseDirectory +
-				", assetLocation='" + assetLocation + '\'' +
-				'}';
+	@XmlTransient
+	public File getAssetFile() {
+		return assetFile;
+	}
+
+	public void setAssetFile(final File assetFile) {
+		this.assetFile = assetFile;
 	}
 }

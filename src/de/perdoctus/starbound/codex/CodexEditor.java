@@ -1,5 +1,6 @@
 package de.perdoctus.starbound.codex;
 
+import de.perdoctus.starbound.base.AssetEditor;
 import de.perdoctus.starbound.base.DefaultController;
 import de.perdoctus.starbound.types.codex.Codex;
 import javafx.beans.binding.Bindings;
@@ -12,10 +13,12 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 
+import java.io.IOException;
+
 /**
  * @author Christoph Giesche
  */
-public class CodexEditorController extends DefaultController<Codex> {
+public class CodexEditor extends AssetEditor<Codex> {
 
 	public MenuItem mnuAddPage;
 	public MenuItem mnuDeletePage;
@@ -24,8 +27,15 @@ public class CodexEditorController extends DefaultController<Codex> {
 	public TextField txtCodexId;
 	public TextField txtCodexTitle;
 
-	public CodexEditorController() throws Exception {
-		super();
+	public CodexEditor(final Codex asset) throws Exception {
+		super(asset);
+
+
+		Bindings.bindBidirectional(txtCodexId.textProperty(), asset.idProperty());
+		Bindings.bindBidirectional(txtCodexTitle.textProperty(), asset.titleProperty());
+		Bindings.bindBidirectional(lstPages.itemsProperty(), asset.contentPagesProperty());
+
+		lstPages.getSelectionModel().selectFirst();
 	}
 
 	public void initialize() {
@@ -65,26 +75,6 @@ public class CodexEditorController extends DefaultController<Codex> {
 				setDirty(wasDirty);
 			}
 		});
-	}
-
-	@Override
-	protected Class<Codex> getModelClass() {
-		return Codex.class;
-	}
-
-	@Override
-	protected void modelChanged(final Codex oldModel, final Codex newModel) {
-		if (oldModel != null) {
-			Bindings.unbindBidirectional(txtCodexId.textProperty(), oldModel.idProperty());
-			Bindings.unbindBidirectional(txtCodexTitle.textProperty(), oldModel.titleProperty());
-			Bindings.unbindBidirectional(lstPages.itemsProperty(), oldModel.contentPagesProperty());
-		}
-		if (newModel != null) {
-			Bindings.bindBidirectional(txtCodexId.textProperty(), newModel.idProperty());
-			Bindings.bindBidirectional(txtCodexTitle.textProperty(), newModel.titleProperty());
-			Bindings.bindBidirectional(lstPages.itemsProperty(), newModel.contentPagesProperty());
-		}
-		lstPages.getSelectionModel().selectFirst();
 	}
 
 	public void addCodexPage(ActionEvent actionEvent) {
