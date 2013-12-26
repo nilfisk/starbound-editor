@@ -1,10 +1,14 @@
 package sample;
 
-import de.perdoctus.starbound.base.dialogs.ProgressDialog;
 import javafx.application.Application;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Labor extends Application {
@@ -16,31 +20,27 @@ public class Labor extends Application {
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
 
-		final Task<String> superTask = new Task<String>() {
+		final ObservableList<String> stringList = FXCollections.observableArrayList("Hans", "Peter");
 
-			@Override
-			protected String call() throws Exception {
-				updateTitle("Hallo");
-				for (int i = 0; i < 120; i++) {
-					updateProgress(i, 119);
-					updateMessage("Scanning Starbound Directory " + i);
+		final VBox rootPane = new VBox();
+		final HBox listHbox = new HBox();
+		final Button addButton = new Button("Add name");
+		final ListView<String> listViewOnlyH = new ListView<>();
+		final ListView<String> listViewOthers = new ListView<>();
+		final TextField textField = new TextField();
 
-					Thread.sleep(75);
-				}
-				return "Hallo";
-			}
-		};
+		addButton.setOnAction(event -> stringList.add(textField.getText()));
 
-		superTask.setOnSucceeded(event -> {
-			printResult(superTask.getValue());
-		});
+		listHbox.getChildren().addAll(listViewOnlyH, listViewOthers);
+		rootPane.getChildren().add(listHbox);
+		rootPane.getChildren().add(textField);
+		rootPane.getChildren().add(addButton);
 
-		ProgressDialog.create().execute(superTask);
+		listViewOnlyH.setItems(stringList.filtered(s -> s.startsWith("H")));
+		listViewOthers.setItems(stringList.filtered(s -> !s.startsWith("H")));
 
-
+		primaryStage.setScene(new Scene(rootPane));
+		primaryStage.show();
 	}
 
-	private void printResult(final String value) {
-		System.out.println(value);
-	}
 }

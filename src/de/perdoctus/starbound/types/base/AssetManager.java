@@ -1,13 +1,9 @@
 package de.perdoctus.starbound.types.base;
 
-import com.sun.xml.internal.ws.developer.SerializationFeature;
-import jdk.nashorn.internal.ir.debug.JSONWriter;
-import org.codehaus.jackson.JsonParseException;
+import de.perdoctus.starbound.types.base.utils.FileUtils;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.type.JavaType;
-import org.codehaus.jackson.type.TypeReference;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,13 +14,11 @@ import java.util.List;
  */
 public class AssetManager {
 
-	private final File coreAssetsDirectory;
-	private final List<EditorType> knownEditorTypes;
+	private final List<AssetType> knownAssetTypes;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	public AssetManager(final File coreAssetsDirectory, final List<EditorType> knownEditorTypes) {
-		this.coreAssetsDirectory = coreAssetsDirectory;
-		this.knownEditorTypes = knownEditorTypes;
+	public AssetManager(final List<AssetType> knownAssetTypes) {
+		this.knownAssetTypes = knownAssetTypes;
 
 		// since  some of Starbound's JSON files are not fully spec conform.
 		objectMapper.getJsonFactory().configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
@@ -38,17 +32,26 @@ public class AssetManager {
 	}
 
 	/**
-	 * Detects and returns the EditorType compatible with the given file.
+	 * Detects and returns the AssetType compatible with the given file.
 	 */
-	private EditorType detectEditorType(final File file) {
+	private AssetType detectEditorType(final File file) {
 		if (file.isFile()) {
-			for (EditorType knownEditorType : knownEditorTypes) {
-				if (file.getName().endsWith(knownEditorType.getFileSuffix())) {
-					return knownEditorType;
+			for (AssetType knownAssetType : knownAssetTypes) {
+				if (file.getName().endsWith(knownAssetType.getFileSuffix())) {
+					return knownAssetType;
 				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Reloads the given asset from disk.
+	 * @param asset The asset to reload.
+	 * @return The reloaded asset.
+	 */
+	public void reloadAsset(final Asset asset) throws IOException {
+		objectMapper.readerForUpdating(asset).readValue(asset.getAssetLocation());
 	}
 
 	/**
@@ -57,21 +60,30 @@ public class AssetManager {
 	 * @return The {@link de.perdoctus.starbound.types.base.Asset} or {@code null} if not compatible.
 	 */
 	public Asset loadAsset(final File assetFile) throws IOException {
-		final EditorType assetEditorType = detectEditorType(assetFile);
-		if (assetEditorType == null) {
+		final AssetType assetAssetType = detectEditorType(assetFile);
+		if (assetAssetType == null) {
 			return null;
 		}
-		final Class<?> aClass;
+		final Class<?> assetClass;
 		try {
-			aClass = Class.forName(assetEditorType.getAssetClass());
+			assetClass = Class.forName(assetAssetType.getAssetClass());
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 
-		final Asset asset = (Asset) objectMapper.readValue(assetFile, aClass);
-		asset.setAssetFile(assetFile);
-		asset.setEditorType(assetEditorType);
+
+		final Asset asset = (Asset) objectMapper.readValue(assetFile, assetClass);
+		asset.setAssetLocation(assetFile);
+		asset.setAssetType(assetAssetType);
 
 		return asset;
+	}
+
+	public void saveAsset(final File assetFile, final Asset asset) throws IOException {
+		final File assetFolder = assetFile.getParentFile();
+		if (!assetFolder.exists() || !assetFolder.isDirectory()) {
+			assetFolder.mkdirs();
+		}
+		objectMapper.writeValue(assetFile, asset);
 	}
 }

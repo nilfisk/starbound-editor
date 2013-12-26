@@ -3,8 +3,9 @@ package de.perdoctus.starbound.types.base;
 /**
  * @author Christoph Giesche
  */
-public class EditorType {
+public class AssetType {
 
+	private String assetTitle;
 	private String fileSuffix;
 	private String editorFXML;
 	private String editorClass;
@@ -12,7 +13,15 @@ public class EditorType {
 	private AssetGroup assetGroup;
 	private String assetClass;
 
-	public EditorType() {
+	public AssetType() {
+	}
+
+	public String getAssetTitle() {
+		return assetTitle;
+	}
+
+	public void setAssetTitle(final String assetTitle) {
+		this.assetTitle = assetTitle;
 	}
 
 	public String getEditorClass() {
@@ -65,7 +74,7 @@ public class EditorType {
 
 	@Override
 	public String toString() {
-		return "EditorType{" +
+		return "AssetType{" +
 				"fileSuffix='" + fileSuffix + '\'' +
 				", editorFXML='" + editorFXML + '\'' +
 				", editorClass='" + editorClass + '\'' +

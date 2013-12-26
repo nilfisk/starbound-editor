@@ -2,8 +2,7 @@ package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
 import de.perdoctus.starbound.types.base.AssetManager;
-import de.perdoctus.starbound.types.base.EditorType;
-import de.perdoctus.starbound.types.base.utils.FileUtils;
+import de.perdoctus.starbound.types.base.AssetType;
 import javafx.concurrent.Task;
 
 import java.io.File;
@@ -19,17 +18,17 @@ import java.util.List;
 public class SupportedAssetsScanTask extends Task<List<Asset>> {
 
 	private final File assetsFolder;
-	private final List<EditorType> editorTypes;
+	private final List<AssetType> assetTypes;
 	private final AssetManager assetManager;
 
 	/**
 	 * @param assetsFolder The folder, the scan will be start at.
-	 * @param editorTypes A list containing all EditorTypes, supported files will be searched for.
+	 * @param assetTypes A list containing all EditorTypes, supported files will be searched for.
 	 */
-	public SupportedAssetsScanTask(final File assetsFolder, final List<EditorType> editorTypes) {
-		this.editorTypes = editorTypes;
+	public SupportedAssetsScanTask(final File assetsFolder, final List<AssetType> assetTypes) {
+		this.assetTypes = assetTypes;
 		this.assetsFolder = assetsFolder;
-		this.assetManager = new AssetManager(assetsFolder, editorTypes);
+		this.assetManager = new AssetManager(assetTypes);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 [
     {
+        "assetTitle" : "Codex",
         "fileSuffix": ".codex",
         "editorFXML": "/codex/CodexEditorView.fxml",
         "editorClass" : "de.perdoctus.starbound.codex.CodexEditor",
@@ -8,6 +9,7 @@
         "assetGroup" : "BOOK"
     },
     {
+        "assetTitle" : "Codex Item",
         "fileSuffix": ".codexitem",
         "editorFXML": "/codex/CodexEditorView.fxml",
         "editorClass" : "de.perdoctus.starbound.codex.CodexEditor",

@@ -1,7 +1,11 @@
 package de.perdoctus.starbound.types.codex;
 
+import com.sun.javafx.binding.StringConstant;
 import de.perdoctus.starbound.types.base.Asset;
 import de.perdoctus.starbound.types.common.Rarity;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringExpression;
+import javafx.beans.property.ReadOnlyStringProperty;
 
 /**
  * @author Christoph Giesche
@@ -103,17 +107,17 @@ public class CodexItem extends Asset {
 	}
 
 	@Override
-	public String assetTitle() {
-		return getTitle() + " (" + getCodexId() + ')';
+	public StringExpression assetTitleProperty() {
+		return Bindings.concat(title);
 	}
 
 	@Override
-	public String assetId() {
-		return null;
+	public StringExpression assetIdProperty() {
+		return StringConstant.valueOf(codexId);
 	}
 
 	@Override
-	public String iconImage() {
+	public StringExpression iconImageProperty() {
 		return null;
 	}
 }

@@ -2,88 +2,123 @@ package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
 import de.perdoctus.starbound.types.base.AssetGroup;
-import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.EventHandler;
-import javafx.scene.control.*;
-import javafx.scene.control.Label;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
-import java.awt.*;
 import java.text.Collator;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 /**
  * @author Christoph Giesche
  */
 public class AssetAccordionCtrl {
 
+
+	private static final Logger LOGGER = Logger.getLogger(AssetAccordionCtrl.class.getName());
 	private final Accordion accAssetList;
+	private final ObservableList<Asset> assets;
 	private Map<AssetGroup, TitledPane> groupPanes = new HashMap<>();
+	private Map<AssetGroup, ListView<Asset>> groupListViews = new HashMap<>();
 	private Function<Asset, Void> onAssetSelected;
 
-	public AssetAccordionCtrl(final Accordion accAssetList) {
+	public AssetAccordionCtrl(final Accordion accAssetList, final ObservableList<Asset> assets) {
 		this.accAssetList = accAssetList;
-	}
+		this.assets = assets;
 
-	public void updateView(final List<Asset> Assets) {
-		resetView();
-		createGroupPanes(Assets);
-		accAssetList.getPanes().addAll(groupPanes.values());
-	}
-
-	private void resetView() {
-		groupPanes.clear();
-		accAssetList.getPanes().clear();
-	}
-
-	private void createGroupPanes(final List<Asset> Assets) {
-		final Map<AssetGroup, List<Asset>> groupedAssets = groupAssets(Assets);
-		for (Map.Entry<AssetGroup, List<Asset>> groupedAssetsEntry : groupedAssets.entrySet()) {
-			final ListView<Asset> assetsList = new ListView<Asset>(FXCollections.observableArrayList(groupedAssetsEntry.getValue()));
-			assetsList.setCellFactory(param -> new AssetListCell());
-			final AssetGroup assetGroup = groupedAssetsEntry.getKey();
-			// Todo: Sortierung dynmaisch
-			assetsList.itemsProperty().getValue().sort((o1, o2) -> Collator.getInstance().compare(o1.assetTitle(), o2.assetTitle()));
-			assetsList.setOnMouseClicked(event -> {
-				if (event.getClickCount() >= 2) {
-					publishEditEvent(assetsList.getSelectionModel().getSelectedItem());
+		assets.addListener(new ListChangeListener<Asset>() {
+			@Override
+			public void onChanged(final Change<? extends Asset> change) {
+				while (change.next()) {
+					if (change.wasAdded()) {
+						LOGGER.info(change.getAddedSize() + " Assets were added to List");
+						for (Asset addedAsset : change.getAddedSubList()) {
+							assetAdded(addedAsset);
+						}
+					}
+					if (change.wasRemoved()) {
+						LOGGER.info(change.getRemovedSize() + " Assets were removed from List");
+						for (Asset removedAsset : change.getRemoved()) {
+							assetRemoved(removedAsset);
+						}
+					}
 				}
-			});
-			final TitledPane assetGroupPane = new TitledPane(assetGroup.name(), assetsList);
-			groupPanes.put(assetGroup, assetGroupPane);
+			}
+		});
+	}
+
+	private void assetAdded(final Asset asset) {
+		final AssetGroup assetGroup = asset.getAssetType().getAssetGroup();
+		if (!groupPanes.containsKey(assetGroup)) {
+			final TitledPane assetGroupTitledPane = createGroupPane(assetGroup);
+			groupPanes.put(assetGroup, assetGroupTitledPane);
+			final ListView<Asset> assetGroupListView = createGroupListView(assetGroup);
+			groupListViews.put(assetGroup, assetGroupListView);
+			assetGroupTitledPane.setContent(assetGroupListView);
+			accAssetList.getPanes().add(assetGroupTitledPane);
 		}
+	}
+
+	private void assetRemoved(final Asset asset) {
+		final AssetGroup assetGroup = asset.getAssetType().getAssetGroup();
+		final TitledPane titledPane = groupPanes.get(assetGroup);
+		final ListView<Asset> listView = (ListView<Asset>) titledPane.getContent();
+		if (listView.getItems().isEmpty()) {
+			accAssetList.getPanes().remove(titledPane);
+			groupPanes.remove(assetGroup);
+			groupListViews.remove(assetGroup);
+		}
+	}
+
+	private ListView<Asset> createGroupListView(final AssetGroup assetGroup) {
+		final ListView<Asset> assetGroupList = new ListView<>();
+		final ObservableList<Asset> filteredAssets = assets
+				.filtered(asset -> assetGroup == asset.getAssetType().getAssetGroup())
+				.sorted((asset1, asset2) -> Collator.getInstance().compare(asset1.assetTitleProperty().get(), asset2.assetTitleProperty().get()));
+
+		assetGroupList.setItems(filteredAssets);
+		assetGroupList.setCellFactory(new Callback<ListView<Asset>, ListCell<Asset>>() {
+			@Override
+			public ListCell<Asset> call(final ListView<Asset> param) {
+				return new AssetListCell();
+			}
+		});
+		assetGroupList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(final MouseEvent event) {
+				if (event.getClickCount() == 2) {
+					fireOnAssetSelected(assetGroupList.getSelectionModel().getSelectedItem());
+				}
+			}
+		});
+
+		return assetGroupList;
+	}
+
+	private TitledPane createGroupPane(final AssetGroup assetGroup) {
+		final TitledPane titledPane = new TitledPane();
+		titledPane.setText(assetGroup.name());
+		return titledPane;
 	}
 
 	public void setOnAssetSelected(final Function<Asset, Void> onAssetSelected) {
 		this.onAssetSelected = onAssetSelected;
 	}
 
-	private void publishEditEvent(final Asset selectedItem) {
+	private void fireOnAssetSelected(final Asset selectedItem) {
 		if (onAssetSelected != null) {
-			System.out.println("JOJOJO!");
 			onAssetSelected.apply(selectedItem);
 		}
-	}
-
-	//TODO: work it harder make it better
-	private Map<AssetGroup, List<Asset>> groupAssets(final List<Asset> Assets) {
-		final HashMap<AssetGroup, List<Asset>> assetsGrouped = new HashMap<>();
-		for (final Asset Asset : Assets) {
-			final AssetGroup assetGroup = Asset.getEditorType().getAssetGroup();
-			if (assetsGrouped.containsKey(assetGroup)) {
-				assetsGrouped.get(assetGroup).add(Asset);
-			} else {
-				final LinkedList<Asset> assetsGroup = new LinkedList<>();
-				assetsGroup.add(Asset);
-				assetsGrouped.put(assetGroup, assetsGroup);
-			}
-		}
-		return assetsGrouped;
 	}
 
 }

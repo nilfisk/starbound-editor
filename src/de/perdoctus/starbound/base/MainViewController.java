@@ -2,19 +2,20 @@ package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.base.dialogs.ProgressDialog;
 import de.perdoctus.starbound.base.dialogs.SettingsDialog;
-import de.perdoctus.starbound.codex.CodexEditor;
-import de.perdoctus.starbound.types.base.Asset;
-import de.perdoctus.starbound.types.base.EditorType;
-import de.perdoctus.starbound.types.base.Mod;
-import de.perdoctus.starbound.types.base.Settings;
-import de.perdoctus.starbound.types.codex.Codex;
+import de.perdoctus.starbound.types.base.*;
+import de.perdoctus.starbound.types.base.utils.FileUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.StringConverter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.controlsfx.control.action.Action;
@@ -24,8 +25,9 @@ import org.controlsfx.dialog.Dialogs;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -33,10 +35,13 @@ import java.util.logging.Logger;
  */
 public class MainViewController {
 
+
 	public static final String ASSETS_FOLDER = "assets";
 	private final static Logger log = Logger.getLogger(MainViewController.class.getName());
 	private static final File SETTINGS_FILE = new File(System.getProperty("user.home") + File.separatorChar + "perdoctus-sb-editor.json");
-
+	private final MainViewModel model = new MainViewModel();
+	@FXML
+	private Menu mnuNew;
 	@FXML
 	private Accordion accAssetList;
 	@FXML
@@ -50,30 +55,58 @@ public class MainViewController {
 	private MenuItem mnuClose;
 	@FXML
 	private TabPane tabPane;
-	private Map<Tab, DefaultController> tabEditorControllers = new HashMap<>(20);
-	private Settings settings;
-	private ObjectProperty<Mod> activeMod = new SimpleObjectProperty<>();
-	private List<EditorType> availableEditors;
-	private AssetAccordionCtrl accordionCtrl;
+	private List<AssetType> availableAssetTypes;
+	private AssetManager assetManager;
 
 	public void initialize() throws Exception {
 		tabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
 		mnuSave.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
-		lblStatus.textProperty().bind(Bindings.concat("Active mod: ", activeMod));
-		accordionCtrl = new AssetAccordionCtrl(accAssetList);
-		accordionCtrl.setOnAssetSelected(asset -> openEditor(asset));
+		lblStatus.textProperty().bind(Bindings.concat("Active mod: ", model.activeModProperty()));
 
-		this.availableEditors = readEditorTypes();
+		final AssetAccordionCtrl accordionCtrl = new AssetAccordionCtrl(accAssetList, model.assetsProperty());
+		accordionCtrl.setOnAssetSelected(this::openEditor);
+
+		this.availableAssetTypes = readEditorTypes();
+		rebuildNewMenu();
+	}
+
+	private void rebuildNewMenu() {
+		mnuNew.getItems().clear();
+		for (AssetType assetType : availableAssetTypes) {
+			final MenuItem menuItem = new MenuItem(assetType.getAssetTitle() + " (" + assetType.getAssetGroup() + ")");
+			menuItem.setOnAction(event -> createNewAsset(assetType));
+			mnuNew.getItems().add(menuItem);
+		}
+	}
+
+	private void createNewAsset(final AssetType assetType) {
+		final Asset newAsset;
+		try {
+			final Class assetClass = Class.forName(assetType.getAssetClass());
+			newAsset = (Asset) assetClass.newInstance();
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+
+		newAsset.setAssetType(assetType);
+
+		openEditor(newAsset);
 	}
 
 	private Void openEditor(final Asset asset) {
-		final Tab editorTab = new Tab(asset.getAssetFile().getName());
+		final Tooltip editorTabTooltip = new Tooltip();
+		editorTabTooltip.textProperty().bind(asset.assetLocationProperty().asString());
+
+		final Tab editorTab = new Tab();
+		editorTab.setTooltip(editorTabTooltip);
+		editorTab.textProperty().bind(asset.assetTitleProperty());
 
 		final Constructor constructor;
 		final AssetEditor assetEditor;
 		try {
-			final Class editorClass = Class.forName(asset.getEditorType().getEditorClass());
-			final Class assetClass = Class.forName(asset.getEditorType().getAssetClass());
+			final Class editorClass = Class.forName(asset.getAssetType().getEditorClass());
+			final Class assetClass = Class.forName(asset.getAssetType().getAssetClass());
 			constructor = editorClass.getConstructor(assetClass);
 
 			final Object castedAsset = assetClass.cast(asset);
@@ -83,19 +116,63 @@ public class MainViewController {
 			throw new RuntimeException(e);
 		}
 		editorTab.setContent(assetEditor);
+		editorTab.setOnCloseRequest(event -> onEditorTabCloseRequest(assetEditor, event));
+		assetEditor.disableProperty().bind(model.activeModProperty().isNull());
 		tabPane.getTabs().add(editorTab);
 		tabPane.getSelectionModel().select(editorTab);
 
 		return null;
 	}
 
-	private List<EditorType> readEditorTypes() {
+	/**
+	 * Is called when an EditorTab is requested to close. Time to save Asset?
+	 *
+	 * @param assetEditor The AssetEdtior of the Tab.
+	 * @param event       The event. May be consumed.
+	 */
+	private void onEditorTabCloseRequest(final AssetEditor assetEditor, final Event event) {
+		if (assetEditor.isDirty()) {
+			final Asset asset = assetEditor.getAsset();
+			final Action action = Dialogs.create().title(asset.assetTitleProperty().get()).message("The asset has beeen changed. Save changes to mod?").showConfirm();
+
+			if (action == Dialog.Actions.CANCEL) {
+				event.consume();
+			} else if (action == Dialog.Actions.YES) {
+				final File assetLocation = asset.getAssetLocation();
+				if (assetLocation == null) {
+					saveAssetAs(asset);
+				}
+				try {
+					assetManager.saveAsset(assetLocation, asset);
+				} catch (IOException e) {
+					e.printStackTrace(); //TODO: error message
+					event.consume();
+				}
+			} else if (action == Dialog.Actions.NO) {
+				reloadAsset(asset);
+			}
+		}
+	}
+
+	private void saveAssetAs(final Asset asset) {
+		//if ()
+	}
+
+	private void reloadAsset(final Asset asset) {
+		try {
+			assetManager.reloadAsset(asset);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private List<AssetType> readEditorTypes() {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			final List<EditorType> editorTypes = objectMapper.readValue(getClass().getResource("/base/editors.json"), new TypeReference<List<EditorType>>() {
+			final List<AssetType> assetTypes = objectMapper.readValue(getClass().getResource("/base/editors.json"), new TypeReference<List<AssetType>>() {
 			});
 
-			return editorTypes;
+			return assetTypes;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -109,7 +186,7 @@ public class MainViewController {
 	}
 
 	private void refreshModList() {
-		final ModsScanTask modsScanTask = new ModsScanTask(new File(settings.getStarboundHome() + File.separatorChar + "mods"));
+		final ModsScanTask modsScanTask = new ModsScanTask(new File(model.getSettings().getStarboundHome() + File.separatorChar + "mods"));
 		modsScanTask.setOnSucceeded(event -> modsChanged(modsScanTask.getValue()));
 
 		ProgressDialog.create().owner(tabPane.getScene().getWindow()).execute(modsScanTask);
@@ -147,7 +224,7 @@ public class MainViewController {
 	}
 
 	private void changeActiveMod(final Mod mod) {
-		activeMod.setValue(mod);
+		model.activeModProperty().setValue(mod);
 
 		if (mod != null) {
 			rescanModDirectory(mod.getModLocation());
@@ -160,8 +237,9 @@ public class MainViewController {
 		if (SETTINGS_FILE.exists()) {
 			final ObjectMapper mapper = new ObjectMapper();
 			try {
-				this.settings = mapper.readValue(SETTINGS_FILE, Settings.class);
+				final Settings settings = mapper.readValue(SETTINGS_FILE, Settings.class);
 				if (settings.getStarboundHome() != null) {
+					model.setSettings(settings);
 					settingsLoaded();
 				} else {
 					forceSettings();
@@ -175,6 +253,7 @@ public class MainViewController {
 	}
 
 	private void settingsLoaded() {
+		this.assetManager = new AssetManager(availableAssetTypes);
 		rescanCoreAssetsDirectory();
 		refreshModList();
 	}
@@ -192,12 +271,8 @@ public class MainViewController {
 		// jojo
 	}
 
-
 	public void saveCurrentEditorTab(ActionEvent actionEvent) {
-		final Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
-		if (currentTab != null) {
-			tabEditorControllers.get(currentTab).save();
-		}
+		// yoyo
 	}
 
 	public void closeActiveEditor(ActionEvent actionEvent) {
@@ -216,29 +291,28 @@ public class MainViewController {
 	}
 
 	private void rescanCoreAssetsDirectory() {
-		final File assetsRootDirectory = new File(settings.getStarboundHome() + File.separatorChar + ASSETS_FOLDER);
-		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(assetsRootDirectory, availableEditors);
+		final File coreAssetsDirectory = new File(model.getSettings().getStarboundHome() + File.separatorChar + ASSETS_FOLDER);
+		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(coreAssetsDirectory, availableAssetTypes);
 		supportedAssetsScanTask.setOnSucceeded(event -> availableCoreAssetsChanged(supportedAssetsScanTask.getValue()));
 		ProgressDialog.create().owner(tabPane.getScene().getWindow()).execute(supportedAssetsScanTask);
 	}
 
 	private void rescanModDirectory(final File modDirectory) {
-		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(modDirectory, availableEditors);
+		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(modDirectory, availableAssetTypes);
 		supportedAssetsScanTask.setOnSucceeded(event -> availableModAssetsChanged(supportedAssetsScanTask.getValue()));
 		ProgressDialog.create().owner(tabPane.getScene().getWindow()).execute(supportedAssetsScanTask);
 	}
 
 	private void availableCoreAssetsChanged(final List<Asset> coreAssets) {
-		for (Asset coreAssetInformation : coreAssets) {
-			System.out.println(coreAssetInformation);
-		}
-		accordionCtrl.updateView(coreAssets);
+		coreAssets.forEach(asset -> asset.setAssetOrigin(AssetOrigin.CORE));
+		model.getAssets().removeAll(model.getAssets().filtered(asset -> asset.getAssetOrigin() == AssetOrigin.CORE));
+		model.getAssets().addAll(coreAssets);
 	}
 
 	private void availableModAssetsChanged(final List<Asset> modAssets) {
-		for (Asset modAssetInformation : modAssets) {
-			System.out.println(modAssetInformation);
-		}
+		modAssets.forEach(asset -> asset.setAssetOrigin(AssetOrigin.MOD));
+		model.getAssets().removeAll(model.getAssets().filtered(asset -> asset.getAssetOrigin() == AssetOrigin.MOD));
+		model.getAssets().addAll(modAssets);
 	}
 
 	public void exitApplication() {

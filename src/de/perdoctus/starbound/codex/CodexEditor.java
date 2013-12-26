@@ -10,6 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 
@@ -30,15 +31,17 @@ public class CodexEditor extends AssetEditor<Codex> {
 	public CodexEditor(final Codex asset) throws Exception {
 		super(asset);
 
-
 		Bindings.bindBidirectional(txtCodexId.textProperty(), asset.idProperty());
 		Bindings.bindBidirectional(txtCodexTitle.textProperty(), asset.titleProperty());
 		Bindings.bindBidirectional(lstPages.itemsProperty(), asset.contentPagesProperty());
 
+
+		initialize3();
+
 		lstPages.getSelectionModel().selectFirst();
 	}
 
-	public void initialize() {
+	public void initialize3() {
 		mnuDeletePage.disableProperty().bind(lstPages.getSelectionModel().selectedItemProperty().isNull());
 
 		txtCodexId.textProperty().addListener(this);
@@ -75,14 +78,18 @@ public class CodexEditor extends AssetEditor<Codex> {
 				setDirty(wasDirty);
 			}
 		});
+
+		setDirty(false);
 	}
 
-	public void addCodexPage(ActionEvent actionEvent) {
-		lstPages.getItems().add(new SimpleStringProperty());
+	@FXML
+	private void addCodexPage(ActionEvent actionEvent) {
+		lstPages.getItems().add(new SimpleStringProperty(""));
 		setDirty(true);
 	}
 
-	public void removeCodexPage(ActionEvent actionEvent) {
+	@FXML
+	private void removeCodexPage(ActionEvent actionEvent) {
 		final ObservableList<StringProperty> selectedItems = lstPages.getSelectionModel().getSelectedItems();
 		for (StringProperty selectedItem : selectedItems) {
 			lstPages.getItems().remove(selectedItem);

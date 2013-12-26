@@ -1,7 +1,7 @@
 package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
-import de.perdoctus.starbound.types.base.EditorType;
+import de.perdoctus.starbound.types.base.AssetType;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -22,9 +22,10 @@ public abstract class AssetEditor<T extends Asset> extends AnchorPane implements
 	private BooleanProperty dirty = new SimpleBooleanProperty(false);
 
 	public AssetEditor(final T asset) throws IOException {
+		super();
 		this.asset = asset;
 
-		final Node view = createView(asset.getEditorType());
+		final Node view = createView(asset.getAssetType());
 		setBottomAnchor(view, 0.0);
 		setTopAnchor(view, 0.0);
 		setLeftAnchor(view, 0.0);
@@ -32,8 +33,8 @@ public abstract class AssetEditor<T extends Asset> extends AnchorPane implements
 		getChildren().add(view);
 	}
 
-	private Node createView(final EditorType editorType) throws IOException {
-		final FXMLLoader loader = new FXMLLoader(getClass().getResource(editorType.getEditorFXML()), ResourceBundle.getBundle(editorType.getResourceBundle()));
+	private Node createView(final AssetType assetType) throws IOException {
+		final FXMLLoader loader = new FXMLLoader(getClass().getResource(assetType.getEditorFXML()), ResourceBundle.getBundle(assetType.getResourceBundle()));
 		loader.setController(this);
 		return loader.load();
 	}

@@ -33,6 +33,7 @@
           <menus>
             <Menu mnemonicParsing="false" text="File">
               <items>
+                <Menu mnemonicParsing="false" text="New" fx:id="mnuNew" />
                 <MenuItem mnemonicParsing="false" onAction="#showOpenFileDialog" text="Open">
                   <accelerator>
                     <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
@@ -43,14 +44,9 @@
                     <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                   </accelerator>
                 </MenuItem>
-                <MenuItem disable="true" mnemonicParsing="false" text="Save All">
+                <MenuItem disable="true" mnemonicParsing="false" text="Save as...">
                   <accelerator>
-                    <KeyCodeCombination alt="DOWN" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                  </accelerator>
-                </MenuItem>
-                <MenuItem disable="true" mnemonicParsing="false" onAction="#closeActiveEditor" text="Close" fx:id="mnuClose">
-                  <accelerator>
-                    <KeyCodeCombination alt="UP" code="W" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                    <KeyCodeCombination alt="DOWN" code="S" control="DOWN" meta="DOWN" shift="UP" shortcut="UP" />
                   </accelerator>
                 </MenuItem>
                 <MenuItem disable="true" mnemonicParsing="false" text="Close All">

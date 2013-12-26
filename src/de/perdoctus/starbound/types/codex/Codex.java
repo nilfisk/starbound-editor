@@ -1,10 +1,10 @@
 package de.perdoctus.starbound.types.codex;
 
+import com.sun.javafx.binding.StringConstant;
 import de.perdoctus.starbound.types.base.Asset;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringExpression;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -70,25 +70,17 @@ public class Codex extends Asset {
 	}
 
 	@Override
-	public String assetTitle() {
-		final StringBuilder stringBuilder = new StringBuilder();
-		if (getTitle() != null) {
-			stringBuilder.append(getTitle());
-		} else {
-			//TODO: i18n
-			stringBuilder.append("Unnamed");
-		}
-		stringBuilder.append(" (").append(getId()).append(')');
-		return stringBuilder.toString();
+	public StringExpression assetTitleProperty() {
+		return Bindings.concat(titleProperty(), " (", idProperty(), ")");
 	}
 
 	@Override
-	public String assetId() {
-		return getId();
+	public StringExpression assetIdProperty() {
+		return id;
 	}
 
 	@Override
-	public String iconImage() {
+	public StringExpression iconImageProperty() {
 		return null;
 	}
 }
