@@ -3,21 +3,16 @@ package de.perdoctus.starbound.base;
 import de.perdoctus.starbound.base.dialogs.ProgressDialog;
 import de.perdoctus.starbound.base.dialogs.SettingsDialog;
 import de.perdoctus.starbound.types.base.*;
-import de.perdoctus.starbound.types.base.utils.FileUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.util.StringConverter;
+import javafx.scene.layout.VBox;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.controlsfx.control.TextFields;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
@@ -26,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -41,9 +35,11 @@ public class MainViewController {
 	private static final File SETTINGS_FILE = new File(System.getProperty("user.home") + File.separatorChar + "perdoctus-sb-editor.json");
 	private final MainViewModel model = new MainViewModel();
 	@FXML
-	private Menu mnuNew;
+	public TreeView tvAssets;
 	@FXML
-	private Accordion accAssetList;
+	private VBox vBoxNavigation;
+	@FXML
+	private Menu mnuNew;
 	@FXML
 	private Label lblStatus;
 	@FXML
@@ -57,14 +53,20 @@ public class MainViewController {
 	private TabPane tabPane;
 	private List<AssetType> availableAssetTypes;
 	private AssetManager assetManager;
+	private AssetTreeviewController assetTreeviewController;
 
 	public void initialize() throws Exception {
 		tabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
 		mnuSave.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 		lblStatus.textProperty().bind(Bindings.concat("Active mod: ", model.activeModProperty()));
 
-		final AssetAccordionCtrl accordionCtrl = new AssetAccordionCtrl(accAssetList, model.assetsProperty());
-		accordionCtrl.setOnAssetSelected(this::openEditor);
+
+		assetTreeviewController = new AssetTreeviewController(tvAssets);
+		assetTreeviewController.setOnAssetSelected(this::openEditor);
+
+		final TextField searchField = TextFields.createSearchField();
+		searchField.setOnAction(event -> assetTreeviewController.filter(searchField.getText()));
+		vBoxNavigation.getChildren().add(searchField);
 
 		this.availableAssetTypes = readEditorTypes();
 		rebuildNewMenu();
@@ -305,14 +307,16 @@ public class MainViewController {
 
 	private void availableCoreAssetsChanged(final List<Asset> coreAssets) {
 		coreAssets.forEach(asset -> asset.setAssetOrigin(AssetOrigin.CORE));
-		model.getAssets().removeAll(model.getAssets().filtered(asset -> asset.getAssetOrigin() == AssetOrigin.CORE));
-		model.getAssets().addAll(coreAssets);
+		model.getCoreAssets().clear();
+		model.getCoreAssets().addAll(coreAssets);
+		assetTreeviewController.setCoreAssets(model.getCoreAssets());
 	}
 
 	private void availableModAssetsChanged(final List<Asset> modAssets) {
 		modAssets.forEach(asset -> asset.setAssetOrigin(AssetOrigin.MOD));
-		model.getAssets().removeAll(model.getAssets().filtered(asset -> asset.getAssetOrigin() == AssetOrigin.MOD));
-		model.getAssets().addAll(modAssets);
+		model.getModAssets().clear();
+		model.getModAssets().addAll(modAssets);
+		assetTreeviewController.setModAssets(model.getModAssets());
 	}
 
 	public void exitApplication() {

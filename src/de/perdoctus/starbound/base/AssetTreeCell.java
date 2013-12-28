@@ -2,8 +2,11 @@ package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
 import de.perdoctus.starbound.types.base.AssetOrigin;
+import javafx.beans.property.ObjectProperty;
+import javafx.scene.control.Cell;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TreeCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -11,13 +14,21 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author Christoph Giesche
  */
-public class AssetListCell extends ListCell<Asset> {
+public class AssetTreeCell extends TreeCell<Object> {
+
 	@Override
-	protected void updateItem(final Asset item, final boolean empty) {
+	protected void updateItem(final Object item, final boolean empty) {
 		super.updateItem(item, empty);
 		if (!empty) {
-			setGraphic(new AssetTitlePane(item));
+			if (item instanceof Asset) {
+				setText(null);
+				setGraphic(new AssetTitlePane((Asset) item));
+			} else {
+				setGraphic(null);
+				setText(item.toString());
+			}
 		} else {
+			setText(null);
 			setGraphic(null);
 		}
 	}

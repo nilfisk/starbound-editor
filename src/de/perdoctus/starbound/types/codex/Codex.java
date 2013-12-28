@@ -1,10 +1,12 @@
 package de.perdoctus.starbound.types.codex;
 
-import com.sun.javafx.binding.StringConstant;
 import de.perdoctus.starbound.types.base.Asset;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.*;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

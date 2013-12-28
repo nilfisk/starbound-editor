@@ -1,5 +1,7 @@
-package de.perdoctus.starbound.types.base;
+package de.perdoctus.starbound.base;
 
+import de.perdoctus.starbound.types.base.Asset;
+import de.perdoctus.starbound.types.base.AssetType;
 import de.perdoctus.starbound.types.base.utils.FileUtils;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;

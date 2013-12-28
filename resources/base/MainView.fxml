@@ -23,11 +23,17 @@
         </HBox>
       </bottom>
       <center>
-        <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" />
+        <SplitPane dividerPositions="0.3294314381270903" focusTraversable="true" prefHeight="160.0" prefWidth="200.0">
+          <items>
+            <VBox id="VBox" fx:id="vBoxNavigation" alignment="CENTER" spacing="0.0">
+              <children>
+                <TreeView fx:id="tvAssets" prefHeight="-1.0" prefWidth="-1.0" showRoot="false" VBox.vgrow="ALWAYS" />
+              </children>
+            </VBox>
+            <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" />
+          </items>
+        </SplitPane>
       </center>
-      <left>
-        <Accordion fx:id="accAssetList" expandedPane="$null" />
-      </left>
       <top>
         <MenuBar>
           <menus>

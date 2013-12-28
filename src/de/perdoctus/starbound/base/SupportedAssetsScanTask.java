@@ -1,7 +1,6 @@
 package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
-import de.perdoctus.starbound.types.base.AssetManager;
 import de.perdoctus.starbound.types.base.AssetType;
 import javafx.concurrent.Task;
 
