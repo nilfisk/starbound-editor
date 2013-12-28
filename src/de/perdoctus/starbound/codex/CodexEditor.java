@@ -35,19 +35,8 @@ public class CodexEditor extends AssetEditor<Codex> {
 		Bindings.bindBidirectional(txtCodexTitle.textProperty(), asset.titleProperty());
 		Bindings.bindBidirectional(lstPages.itemsProperty(), asset.contentPagesProperty());
 
-
-		initialize3();
-
-		lstPages.getSelectionModel().selectFirst();
-	}
-
-	public void initialize3() {
+		// Disable delete page menu, if no page is selected.
 		mnuDeletePage.disableProperty().bind(lstPages.getSelectionModel().selectedItemProperty().isNull());
-
-		txtCodexId.textProperty().addListener(this);
-		txtCodexTitle.textProperty().addListener(this);
-		txtPageContent.textProperty().addListener(this);
-		lstPages.itemsProperty().addListener(this);
 
 		lstPages.setCellFactory(new Callback<ListView<StringProperty>, ListCell<StringProperty>>() {
 			@Override
@@ -79,7 +68,13 @@ public class CodexEditor extends AssetEditor<Codex> {
 			}
 		});
 
-		setDirty(false);
+		lstPages.getSelectionModel().selectFirst();
+
+		// Add this as ChangeListener (sets dirty flag)
+		txtCodexId.textProperty().addListener(this);
+		txtCodexTitle.textProperty().addListener(this);
+		txtPageContent.textProperty().addListener(this);
+		lstPages.itemsProperty().addListener(this);
 	}
 
 	@FXML

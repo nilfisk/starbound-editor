@@ -12,7 +12,9 @@ import java.io.IOException;
 
 /**
  * @author Christoph Giesche
+ * @deprecated This is sh***. Extend {@link de.perdoctus.starbound.base.AssetEditor} instead (for Assets).
  */
+@Deprecated
 public abstract class DefaultController<M> implements ChangeListener {
 
 	private BooleanProperty dirty = new SimpleBooleanProperty(false);

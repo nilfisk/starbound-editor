@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 /**
+ * A base implementation for Asset-Editors.
+ *
  * @author Christoph Giesche
  */
 public abstract class AssetEditor<T extends Asset> extends AnchorPane implements ChangeListener {
