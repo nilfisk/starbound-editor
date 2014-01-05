@@ -2,6 +2,7 @@ package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.base.dialogs.ProgressDialog;
 import de.perdoctus.starbound.base.dialogs.SettingsDialog;
+import de.perdoctus.starbound.mod.ModDialog;
 import de.perdoctus.starbound.types.base.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -191,7 +192,7 @@ public class MainViewController {
 		final ModsScanTask modsScanTask = new ModsScanTask(new File(model.getSettings().getStarboundHome() + File.separatorChar + "mods"));
 		modsScanTask.setOnSucceeded(event -> modsChanged(modsScanTask.getValue()));
 
-		ProgressDialog.create().owner(tabPane.getScene().getWindow()).execute(modsScanTask);
+		ProgressDialog.getInstance().owner(tabPane.getScene().getWindow()).execute(modsScanTask);
 	}
 
 	private void modsChanged(final List<Mod> value) {
@@ -270,7 +271,7 @@ public class MainViewController {
 	}
 
 	public void showOpenFileDialog(ActionEvent actionEvent) {
-		// jojo
+		Dialogs.create().message("hallo").masthead("Dies ist ein Titel").showInformation();
 	}
 
 	public void saveCurrentEditorTab(ActionEvent actionEvent) {
@@ -296,13 +297,13 @@ public class MainViewController {
 		final File coreAssetsDirectory = new File(model.getSettings().getStarboundHome() + File.separatorChar + ASSETS_FOLDER);
 		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(coreAssetsDirectory, availableAssetTypes);
 		supportedAssetsScanTask.setOnSucceeded(event -> availableCoreAssetsChanged(supportedAssetsScanTask.getValue()));
-		ProgressDialog.create().owner(tabPane.getScene().getWindow()).execute(supportedAssetsScanTask);
+		ProgressDialog.getInstance().owner(tabPane.getScene().getWindow()).execute(supportedAssetsScanTask);
 	}
 
 	private void rescanModDirectory(final File modDirectory) {
 		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(modDirectory, availableAssetTypes);
 		supportedAssetsScanTask.setOnSucceeded(event -> availableModAssetsChanged(supportedAssetsScanTask.getValue()));
-		ProgressDialog.create().owner(tabPane.getScene().getWindow()).execute(supportedAssetsScanTask);
+		ProgressDialog.getInstance().owner(tabPane.getScene().getWindow()).execute(supportedAssetsScanTask);
 	}
 
 	private void availableCoreAssetsChanged(final List<Asset> coreAssets) {
@@ -322,5 +323,9 @@ public class MainViewController {
 	public void exitApplication() {
 		//TODO: Check unsaved files
 		Platform.exit();
+	}
+
+	public void showCreateModDialog(ActionEvent actionEvent) {
+		ModDialog.create(tabPane.getScene().getWindow()).show();
 	}
 }

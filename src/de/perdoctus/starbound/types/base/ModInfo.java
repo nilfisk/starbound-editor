@@ -1,7 +1,10 @@
 package de.perdoctus.starbound.types.base;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -16,7 +19,7 @@ public class ModInfo {
 	private StringProperty name = new SimpleStringProperty();
 	private StringProperty version = new SimpleStringProperty();
 	private StringProperty path = new SimpleStringProperty();
-	private List<String> dependencies;
+	private ListProperty<String> dependencies = new SimpleListProperty<>();
 
 	public String getName() {
 		return name.get();
@@ -54,12 +57,15 @@ public class ModInfo {
 		return path;
 	}
 
-	public List<String> getDependencies() {
+	public ObservableList<String> getDependencies() {
+		return dependencies.get();
+	}
+
+	public ListProperty<String> dependenciesProperty() {
 		return dependencies;
 	}
 
-	public void setDependencies(final List<String> dependencies) {
-		this.dependencies = dependencies;
+	public void setDependencies(final ObservableList<String> dependencies) {
+		this.dependencies.set(dependencies);
 	}
-
 }
