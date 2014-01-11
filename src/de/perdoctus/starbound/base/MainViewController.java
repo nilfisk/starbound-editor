@@ -6,6 +6,9 @@ import de.perdoctus.starbound.mod.ModDialog;
 import de.perdoctus.starbound.types.base.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -21,6 +24,7 @@ import org.controlsfx.dialog.Dialogs;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -32,8 +36,10 @@ public class MainViewController {
 
 
 	public static final String ASSETS_FOLDER = "assets";
+	public static final String STARBOUND_VERSIONS_SOURCE = "https://raw.github.com/cgiesche/starbound-editor/master/resources/base/starbound-versions.json";
 	private final static Logger log = Logger.getLogger(MainViewController.class.getName());
 	private static final File SETTINGS_FILE = new File(System.getProperty("user.home") + File.separatorChar + "perdoctus-sb-editor.json");
+	@Deprecated
 	private final MainViewModel model = new MainViewModel();
 	@FXML
 	public TreeView tvAssets;
@@ -55,12 +61,26 @@ public class MainViewController {
 	private List<AssetType> availableAssetTypes;
 	private AssetManager assetManager;
 	private AssetTreeviewController assetTreeviewController;
+	private ApplicationContext applicationContext;
+
+	public MainViewController() {
+		this.applicationContext = ApplicationContext.getInstance();
+	}
 
 	public void initialize() throws Exception {
 		tabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
 		mnuSave.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 		lblStatus.textProperty().bind(Bindings.concat("Active mod: ", model.activeModProperty()));
 
+		applicationContext.getSettings().starboundHomeProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+				if (!newValue.isEmpty()) {
+					rescanCoreAssetsDirectory();
+					refreshModList();
+				}
+			}
+		});
 
 		assetTreeviewController = new AssetTreeviewController(tvAssets);
 		assetTreeviewController.setOnAssetSelected(this::openEditor);
@@ -151,7 +171,7 @@ public class MainViewController {
 					e.printStackTrace(); //TODO: error message
 					event.consume();
 				}
-			} else if (action == Dialog.Actions.NO) {
+			} else if (action == Dialog.Actions.NO && asset.getAssetLocation() != null) {
 				reloadAsset(asset);
 			}
 		}
@@ -185,11 +205,42 @@ public class MainViewController {
 	 * Called, directly after the main window became visible.
 	 */
 	public void onShow() {
-		reloadSettings();
+		initApplicationContext();
+	}
+
+	private void initApplicationContext() {
+		loadStarboundVersions();
+		loadSettings();
+	}
+
+	private void loadSettings() {
+		if (SETTINGS_FILE.exists()) {
+			final ObjectMapper objectMapper = new ObjectMapper();
+			final Settings settings = applicationContext.getSettings();
+			try {
+				objectMapper.readerForUpdating(settings).readValue(SETTINGS_FILE);
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException(e); //TODO: Handle
+			}
+		}
+	}
+
+	private void loadStarboundVersions() {
+		//final URL remoteSbVersionsURL = new URL(STARBOUND_VERSIONS_SOURCE);
+		final URL remoteSbVersionsURL = getClass().getResource("/base/starbound-versions.json"); // FIXME: s.o.
+		final JsonDownloadTask<StarboundVersion[]> task = new JsonDownloadTask<>(remoteSbVersionsURL, StarboundVersion[].class);
+
+		ProgressDialog.getInstance().execute(task);
+
+		task.setOnSucceeded(event -> {
+			applicationContext.getStarboundVersions().clear();
+			applicationContext.getStarboundVersions().addAll(task.getValue());
+		});
 	}
 
 	private void refreshModList() {
-		final ModsScanTask modsScanTask = new ModsScanTask(new File(model.getSettings().getStarboundHome() + File.separatorChar + "mods"));
+		final ModsScanTask modsScanTask = new ModsScanTask(new File(applicationContext.getSettings().getStarboundHome() + File.separatorChar + "mods"));
 		modsScanTask.setOnSucceeded(event -> modsChanged(modsScanTask.getValue()));
 
 		ProgressDialog.getInstance().owner(tabPane.getScene().getWindow()).execute(modsScanTask);
@@ -236,6 +287,7 @@ public class MainViewController {
 		}
 	}
 
+	@Deprecated
 	private void reloadSettings() {
 		if (SETTINGS_FILE.exists()) {
 			final ObjectMapper mapper = new ObjectMapper();
@@ -289,18 +341,20 @@ public class MainViewController {
 	private void showSettingsDialog(boolean forceReload) {
 		final boolean settingsChanged = SettingsDialog.create(SETTINGS_FILE).owner(tabPane.getScene().getWindow()).show();
 		if (settingsChanged || forceReload) {
-			reloadSettings();
+			loadSettings();
 		}
 	}
 
 	private void rescanCoreAssetsDirectory() {
-		final File coreAssetsDirectory = new File(model.getSettings().getStarboundHome() + File.separatorChar + ASSETS_FOLDER);
+		model.getCoreAssets().clear();
+		final File coreAssetsDirectory = new File(applicationContext.getSettings().getStarboundHome() + File.separatorChar + ASSETS_FOLDER);
 		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(coreAssetsDirectory, availableAssetTypes);
 		supportedAssetsScanTask.setOnSucceeded(event -> availableCoreAssetsChanged(supportedAssetsScanTask.getValue()));
 		ProgressDialog.getInstance().owner(tabPane.getScene().getWindow()).execute(supportedAssetsScanTask);
 	}
 
 	private void rescanModDirectory(final File modDirectory) {
+		model.getModAssets().clear();
 		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(modDirectory, availableAssetTypes);
 		supportedAssetsScanTask.setOnSucceeded(event -> availableModAssetsChanged(supportedAssetsScanTask.getValue()));
 		ProgressDialog.getInstance().owner(tabPane.getScene().getWindow()).execute(supportedAssetsScanTask);
@@ -308,16 +362,12 @@ public class MainViewController {
 
 	private void availableCoreAssetsChanged(final List<Asset> coreAssets) {
 		coreAssets.forEach(asset -> asset.setAssetOrigin(AssetOrigin.CORE));
-		model.getCoreAssets().clear();
-		model.getCoreAssets().addAll(coreAssets);
-		assetTreeviewController.setCoreAssets(model.getCoreAssets());
+		assetTreeviewController.setCoreAssets(FXCollections.observableList(coreAssets));
 	}
 
 	private void availableModAssetsChanged(final List<Asset> modAssets) {
 		modAssets.forEach(asset -> asset.setAssetOrigin(AssetOrigin.MOD));
-		model.getModAssets().clear();
-		model.getModAssets().addAll(modAssets);
-		assetTreeviewController.setModAssets(model.getModAssets());
+		assetTreeviewController.setModAssets(FXCollections.observableList(modAssets));
 	}
 
 	public void exitApplication() {

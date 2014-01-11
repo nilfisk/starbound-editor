@@ -1,4 +1,4 @@
-package sample;
+package de.perdoctus.starbound;
 
 import de.perdoctus.starbound.base.JsonDownloadTask;
 import de.perdoctus.starbound.base.MainViewController;
@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Main extends Application {
+public class StarboundEditor extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -26,29 +26,12 @@ public class Main extends Application {
 	    primaryStage.setScene(new Scene(root));
 	    primaryStage.setHeight(768);
 	    primaryStage.setWidth(1024);
+	    primaryStage.setOnShown(event -> controller.onShow());
 	    primaryStage.show();
-
-	    final JsonDownloadTask<String[]> task = new JsonDownloadTask<>(new URL("http://www.google.de"), String[].class);
-	    task.setOnSucceeded(event -> {
-		    for (String s : task.getValue()) {
-			    System.out.println(s);
-		    }
-	    });
-	    task.setOnFailed(event -> {
-		    task.getException().printStackTrace();
-	    });
-
-	    ProgressDialog.getInstance().execute(task);
-
-	    //primaryStage.setOnShown(event -> controller.onShow());
-	    controller.onShow();
-
 
     }
 
-
     public static void main(String[] args) {
-
         launch(args);
     }
 }

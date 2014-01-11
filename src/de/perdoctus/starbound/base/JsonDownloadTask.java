@@ -20,7 +20,7 @@ public class JsonDownloadTask<T> extends Task<T> {
 
 	@Override
 	protected T call() throws Exception {
-		updateTitle("Downloading Data...");
+		updateTitle("Downloading Updates ...");
 		updateMessage(url.toString());
 
 		return new ObjectMapper().readValue(url, clazz);

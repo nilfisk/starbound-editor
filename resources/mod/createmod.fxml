@@ -23,7 +23,7 @@
             <Insets top="5.0" />
           </GridPane.margin>
         </ListView>
-        <ComboBox fx:id="cmbVersion" editable="true" maxWidth="-1.0" minWidth="-1.0" promptText="hund katze maus" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <ComboBox fx:id="cmbVersion" maxWidth="-1.0" minWidth="-1.0" promptText="hund katze maus" GridPane.columnIndex="1" GridPane.rowIndex="1">
           <items>
             <FXCollections fx:factory="observableArrayList">
               <String fx:value="Item 1" />

@@ -18,6 +18,7 @@ import java.io.File;
 /**
  * @author Christoph Giesche
  */
+@Deprecated
 public class MainViewModel {
 
 	private Settings settings;

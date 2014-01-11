@@ -4,7 +4,9 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import sun.plugin2.applet.FXAppletSecurityManager;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -57,7 +59,7 @@ public class ModInfo {
 		return path;
 	}
 
-	public ObservableList<String> getDependencies() {
+	public List<String> getDependencies() {
 		return dependencies.get();
 	}
 
@@ -65,7 +67,7 @@ public class ModInfo {
 		return dependencies;
 	}
 
-	public void setDependencies(final ObservableList<String> dependencies) {
-		this.dependencies.set(dependencies);
+	public void setDependencies(final List<String> dependencies) {
+		this.dependencies.set(FXCollections.observableArrayList(dependencies));
 	}
 }

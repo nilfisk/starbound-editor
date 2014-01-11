@@ -1,6 +1,7 @@
 package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeCell;
@@ -68,12 +69,15 @@ public class AssetTreeviewController {
 
 	public void setCoreAssets(final ObservableList<Asset> coreAssets) {
 		coreAssetOriginTreeItemController.setAssets(coreAssets);
-		coreAssetOriginTreeItemController.refreshView();
+//		coreAssetOriginTreeItemController.assetsProperty().bind((ObservableValue<? extends ObservableList<Asset>>) coreAssets);
+//		coreAssetOriginTreeItemController.refreshView();
 	}
 
 	public void setModAssets(final ObservableList<Asset> modAssets) {
 		modAssetOriginTreeItemController.setAssets(modAssets);
-		modAssetOriginTreeItemController.refreshView();
+//		modAssetOriginTreeItemController.assetsProperty().bind((ObservableValue<? extends ObservableList<Asset>>) modAssets);
+
+//		modAssetOriginTreeItemController.refreshView();
 	}
 
 	public void filter(final String text) {
