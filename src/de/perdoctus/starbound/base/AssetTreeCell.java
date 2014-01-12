@@ -1,15 +1,10 @@
 package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
-import de.perdoctus.starbound.types.base.AssetOrigin;
-import javafx.beans.property.ObjectProperty;
-import javafx.scene.control.Cell;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.TreeCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
 
 /**
  * @author Christoph Giesche
@@ -24,7 +19,7 @@ public class AssetTreeCell extends TreeCell<Object> {
 				setText(null);
 				setGraphic(new AssetTitlePane((Asset) item));
 			} else {
-				setGraphic(null);
+				setGraphic(getTreeItem().getGraphic());
 				setText(item.toString());
 			}
 		} else {
@@ -38,7 +33,6 @@ public class AssetTreeCell extends TreeCell<Object> {
 		public AssetTitlePane(final Asset asset) {
 			super();
 			setSpacing(5.0);
-			disableProperty().bind(asset.overwrittenProperty());
 
 			final VBox vBox = new VBox();
 
@@ -49,13 +43,6 @@ public class AssetTreeCell extends TreeCell<Object> {
 			titleLabel.textProperty().bind(asset.assetTitleProperty());
 			vBox.getChildren().add(titleLabel);
 
-			final Rectangle marker = new Rectangle(10, 10);
-			marker.setStyle("-fx-fill: darkgray");
-			if (asset.getAssetOrigin() == AssetOrigin.MOD) {
-				marker.setStyle("-fx-fill: #9dffaa");
-			}
-
-			getChildren().add(marker);
 			getChildren().add(vBox);
 
 		}

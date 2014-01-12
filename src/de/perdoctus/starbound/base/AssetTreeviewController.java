@@ -1,6 +1,7 @@
 package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
+import de.perdoctus.starbound.types.base.AssetOrigin;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -11,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * @author Christoph Giesche
@@ -21,7 +23,7 @@ public class AssetTreeviewController {
 	private final AssetOriginTreeItemController modAssetOriginTreeItemController;
 	private Function<Asset, Void> onAssetSelected;
 
-	public AssetTreeviewController(final TreeView<Object> assetTreeView) {
+	public AssetTreeviewController(final TreeView<Object> assetTreeView, final ObservableList<Asset> assets) {
 		final TreeView<Object> assetTreeView1 = assetTreeView;
 
 		final TreeItem<Object> modAssetsTreeItem = new TreeItem<>("Mod Assets");
@@ -53,8 +55,9 @@ public class AssetTreeviewController {
 			}
 		});
 
-		coreAssetOriginTreeItemController = new AssetOriginTreeItemController(coreAssetsTreeItem);
-		modAssetOriginTreeItemController = new AssetOriginTreeItemController(modAssetsTreeItem);
+		coreAssetOriginTreeItemController = new AssetOriginTreeItemController(coreAssetsTreeItem, assets.filtered(asset -> asset.getAssetOrigin() == AssetOrigin.CORE));
+		modAssetOriginTreeItemController = new AssetOriginTreeItemController(modAssetsTreeItem, assets.filtered(asset -> asset.getAssetOrigin() == AssetOrigin.MOD));
+
 	}
 
 	public void setOnAssetSelected(final Function<Asset, Void> onAssetSelected) {
@@ -65,19 +68,6 @@ public class AssetTreeviewController {
 		if (onAssetSelected != null) {
 			onAssetSelected.apply(selectedItem);
 		}
-	}
-
-	public void setCoreAssets(final ObservableList<Asset> coreAssets) {
-		coreAssetOriginTreeItemController.setAssets(coreAssets);
-//		coreAssetOriginTreeItemController.assetsProperty().bind((ObservableValue<? extends ObservableList<Asset>>) coreAssets);
-//		coreAssetOriginTreeItemController.refreshView();
-	}
-
-	public void setModAssets(final ObservableList<Asset> modAssets) {
-		modAssetOriginTreeItemController.setAssets(modAssets);
-//		modAssetOriginTreeItemController.assetsProperty().bind((ObservableValue<? extends ObservableList<Asset>>) modAssets);
-
-//		modAssetOriginTreeItemController.refreshView();
 	}
 
 	public void filter(final String text) {

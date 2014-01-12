@@ -21,37 +21,11 @@ import java.io.File;
 @Deprecated
 public class MainViewModel {
 
-	private Settings settings;
 	private ObjectProperty<Mod> activeMod = new SimpleObjectProperty<>();
-	private ListProperty<Asset> coreAssets = new SimpleListProperty<>(FXCollections.<Asset>observableArrayList());
-	private ListProperty<Asset> modAssets = new SimpleListProperty<>(FXCollections.<Asset>observableArrayList());
+	private ObservableList<Asset> assets = FXCollections.observableArrayList();
 
-	public MainViewModel() {
-
-	}
-
-	public ObservableList<Asset> getModAssets() {
-		return modAssets.get();
-	}
-
-	public void setModAssets(final ObservableList<Asset> modAssets) {
-		this.modAssets.set(modAssets);
-	}
-
-	public ListProperty<Asset> modAssetsProperty() {
-		return modAssets;
-	}
-
-	public ObservableList<Asset> getCoreAssets() {
-		return coreAssets.get();
-	}
-
-	public void setCoreAssets(final ObservableList<Asset> coreAssets) {
-		this.coreAssets.set(coreAssets);
-	}
-
-	public ListProperty<Asset> coreAssetsProperty() {
-		return coreAssets;
+	public ObservableList<Asset> getAssets() {
+		return assets;
 	}
 
 	public Mod getActiveMod() {
@@ -66,11 +40,4 @@ public class MainViewModel {
 		return activeMod;
 	}
 
-	public Settings getSettings() {
-		return settings;
-	}
-
-	public void setSettings(final Settings settings) {
-		this.settings = settings;
-	}
 }

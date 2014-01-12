@@ -1,11 +1,14 @@
 package de.perdoctus.starbound.base;
 
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import de.perdoctus.starbound.base.dialogs.ProgressDialog;
 import de.perdoctus.starbound.base.dialogs.SettingsDialog;
 import de.perdoctus.starbound.mod.ModDialog;
 import de.perdoctus.starbound.types.base.*;
+import de.perdoctus.starbound.types.codex.Codex;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringExpression;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -25,9 +28,12 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * @author Christoph Giesche
@@ -70,7 +76,17 @@ public class MainViewController {
 	public void initialize() throws Exception {
 		tabPane.tabClosingPolicyProperty().setValue(TabPane.TabClosingPolicy.ALL_TABS);
 		mnuSave.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
-		lblStatus.textProperty().bind(Bindings.concat("Active mod: ", model.activeModProperty()));
+
+		/*
+		TODO: Event! ========================================================================
+		Modwechsel findet bisher noch direkt statt. Dies wird das neue Vorgehen.
+		 */
+		model.activeModProperty().addListener(new ChangeListener<Mod>() {
+			@Override
+			public void changed(final ObservableValue<? extends Mod> observableValue, final Mod mod, final Mod mod2) {
+				log.fine("Active Mod changed: " + mod2);
+			}
+		});
 
 		applicationContext.getSettings().starboundHomeProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -82,7 +98,7 @@ public class MainViewController {
 			}
 		});
 
-		assetTreeviewController = new AssetTreeviewController(tvAssets);
+		assetTreeviewController = new AssetTreeviewController(tvAssets, model.getAssets());
 		assetTreeviewController.setOnAssetSelected(this::openEditor);
 
 		final TextField searchField = TextFields.createSearchField();
@@ -283,7 +299,7 @@ public class MainViewController {
 		if (mod != null) {
 			rescanModDirectory(mod.getModLocation());
 		} else {
-			availableModAssetsChanged(Collections.emptyList());
+			model.getAssets().removeIf(asset -> asset.getAssetOrigin() == AssetOrigin.MOD);
 		}
 	}
 
@@ -294,7 +310,7 @@ public class MainViewController {
 			try {
 				final Settings settings = mapper.readValue(SETTINGS_FILE, Settings.class);
 				if (settings.getStarboundHome() != null) {
-					model.setSettings(settings);
+//					model.setSettings(settings);
 					settingsLoaded();
 				} else {
 					forceSettings();
@@ -346,7 +362,8 @@ public class MainViewController {
 	}
 
 	private void rescanCoreAssetsDirectory() {
-		model.getCoreAssets().clear();
+		final boolean b = model.getAssets().removeIf(asset -> asset.getAssetOrigin() == AssetOrigin.CORE);
+
 		final File coreAssetsDirectory = new File(applicationContext.getSettings().getStarboundHome() + File.separatorChar + ASSETS_FOLDER);
 		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(coreAssetsDirectory, availableAssetTypes);
 		supportedAssetsScanTask.setOnSucceeded(event -> availableCoreAssetsChanged(supportedAssetsScanTask.getValue()));
@@ -354,7 +371,8 @@ public class MainViewController {
 	}
 
 	private void rescanModDirectory(final File modDirectory) {
-		model.getModAssets().clear();
+		final boolean b = model.getAssets().removeIf(asset -> asset.getAssetOrigin() == AssetOrigin.MOD);
+
 		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(modDirectory, availableAssetTypes);
 		supportedAssetsScanTask.setOnSucceeded(event -> availableModAssetsChanged(supportedAssetsScanTask.getValue()));
 		ProgressDialog.getInstance().owner(tabPane.getScene().getWindow()).execute(supportedAssetsScanTask);
@@ -362,12 +380,12 @@ public class MainViewController {
 
 	private void availableCoreAssetsChanged(final List<Asset> coreAssets) {
 		coreAssets.forEach(asset -> asset.setAssetOrigin(AssetOrigin.CORE));
-		assetTreeviewController.setCoreAssets(FXCollections.observableList(coreAssets));
+		model.getAssets().addAll(coreAssets);
 	}
 
 	private void availableModAssetsChanged(final List<Asset> modAssets) {
 		modAssets.forEach(asset -> asset.setAssetOrigin(AssetOrigin.MOD));
-		assetTreeviewController.setModAssets(FXCollections.observableList(modAssets));
+		model.getAssets().addAll(modAssets);
 	}
 
 	public void exitApplication() {
@@ -376,6 +394,9 @@ public class MainViewController {
 	}
 
 	public void showCreateModDialog(ActionEvent actionEvent) {
-		ModDialog.create(tabPane.getScene().getWindow()).show();
+//		ModDialog.create(tabPane.getScene().getWindow()).show();
+
+		final Asset asset = model.getAssets().get(0);
+		model.getAssets().add(asset);
 	}
 }

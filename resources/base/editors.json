@@ -1,21 +1,27 @@
 [
     {
-        "assetTitle" : "Codex",
+        "assetTitle": "Codex",
         "fileSuffix": ".codex",
         "editorFXML": "/codex/CodexEditorView.fxml",
-        "editorClass" : "de.perdoctus.starbound.codex.CodexEditor",
+        "editorClass": "de.perdoctus.starbound.codex.CodexEditor",
         "assetClass": "de.perdoctus.starbound.types.codex.Codex",
         "resourceBundle": "codex.codex",
-        "assetGroup" : "BOOK"
+        "assetGroup": {
+            "title": "BOOK",
+            "icon": "/codex/codex.png"
+        }
     },
     {
-        "assetTitle" : "Codex Item",
+        "assetTitle": "Codex Item",
         "fileSuffix": ".codexitem",
         "editorFXML": "/codex/CodexEditorView.fxml",
-        "editorClass" : "de.perdoctus.starbound.codex.CodexEditor",
+        "editorClass": "de.perdoctus.starbound.codex.CodexEditor",
         "assetClass": "de.perdoctus.starbound.types.codex.CodexItem",
         "resourceBundle": "codex.codex",
-        "assetGroup" : "BOOK"
+        "assetGroup": {
+            "title": "BOOK",
+            "icon": "/codex/codex.png"
+        }
     }
 
 ]
