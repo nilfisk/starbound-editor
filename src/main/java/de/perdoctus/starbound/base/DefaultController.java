@@ -7,8 +7,14 @@ import javafx.beans.value.ObservableValue;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.groups.Default;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * @author Christoph Giesche
@@ -19,7 +25,7 @@ public abstract class DefaultController<M> implements ChangeListener {
 
 	private BooleanProperty dirty = new SimpleBooleanProperty(false);
 	private File modelFile;
-	private M model;
+	private M    model;
 
 	/**
 	 * Creates a new instance of the Controller.
@@ -101,7 +107,7 @@ public abstract class DefaultController<M> implements ChangeListener {
 	}
 
 	/**
-	 * @returns The model's type class of this controller.
+	 * @return The model's type class of this controller.
 	 */
 	protected abstract Class<M> getModelClass();
 

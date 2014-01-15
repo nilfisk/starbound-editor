@@ -13,6 +13,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -25,7 +28,7 @@ public class SettingsDialog extends DefaultController<Settings> {
 	private final Stage settingsStage;
 	private boolean settingsChanged = false;
 	@FXML
-	private TextField txtStarboundDir;
+	private TextField  txtStarboundDir;
 	@FXML
 	private BorderPane rootPane;
 
