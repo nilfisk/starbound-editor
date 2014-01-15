@@ -1,22 +1,20 @@
 package de.perdoctus.starbound.base;
 
-import com.sun.org.apache.bcel.internal.classfile.Code;
-import de.perdoctus.starbound.base.dialogs.ProgressDialog;
-import de.perdoctus.starbound.base.dialogs.SettingsDialog;
-import de.perdoctus.starbound.mod.ModDialog;
-import de.perdoctus.starbound.types.base.*;
-import de.perdoctus.starbound.types.codex.Codex;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.net.URL;
+import java.util.List;
+import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringExpression;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.controlsfx.control.TextFields;
@@ -24,50 +22,44 @@ import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
+import de.perdoctus.starbound.base.dialogs.ProgressDialog;
+import de.perdoctus.starbound.base.dialogs.SettingsDialog;
+import de.perdoctus.starbound.mod.ModDialog;
+import de.perdoctus.starbound.types.base.*;
 
 /**
  * @author Christoph Giesche
  */
 public class MainViewController {
 
-
-	public static final String ASSETS_FOLDER = "assets";
-	public static final String STARBOUND_VERSIONS_SOURCE = "https://raw.github.com/cgiesche/starbound-editor/master/resources/base/starbound-versions.json";
-	private final static Logger log = Logger.getLogger(MainViewController.class.getName());
-	private static final File SETTINGS_FILE = new File(System.getProperty("user.home") + File.separatorChar + "perdoctus-sb-editor.json");
+	public static final String		ASSETS_FOLDER				= "assets";
+	public static final String		STARBOUND_VERSIONS_SOURCE	= "https://raw.github.com/cgiesche/starbound-editor/master/resources/de.perdoctus.starbound.base/starbound-versions.json";
+	private final static Logger		log							= Logger.getLogger(MainViewController.class.getName());
+	private static final File		SETTINGS_FILE				= new File(System.getProperty("user.home") + File.separatorChar
+																		+ "perdoctus-sb-editor.json");
 	@Deprecated
-	private final MainViewModel model = new MainViewModel();
+	private final MainViewModel		model						= new MainViewModel();
 	@FXML
-	public TreeView tvAssets;
+	public TreeView					tvAssets;
 	@FXML
-	private VBox vBoxNavigation;
+	private VBox					vBoxNavigation;
 	@FXML
-	private Menu mnuNew;
+	private Menu					mnuNew;
 	@FXML
-	private Label lblStatus;
+	private Label					lblStatus;
 	@FXML
-	private Menu mnuMods;
-	private ToggleGroup tgMods = new ToggleGroup();
+	private Menu					mnuMods;
+	private ToggleGroup				tgMods						= new ToggleGroup();
 	@FXML
-	private MenuItem mnuSave;
+	private MenuItem				mnuSave;
 	@FXML
-	private MenuItem mnuClose;
+	private MenuItem				mnuClose;
 	@FXML
-	private TabPane tabPane;
-	private List<AssetType> availableAssetTypes;
-	private AssetManager assetManager;
-	private AssetTreeviewController assetTreeviewController;
-	private ApplicationContext applicationContext;
+	private TabPane					tabPane;
+	private List<AssetType>			availableAssetTypes;
+	private AssetManager			assetManager;
+	private AssetTreeviewController	assetTreeviewController;
+	private ApplicationContext		applicationContext;
 
 	public MainViewController() {
 		this.applicationContext = ApplicationContext.getInstance();
@@ -165,14 +157,17 @@ public class MainViewController {
 
 	/**
 	 * Is called when an EditorTab is requested to close. Time to save Asset?
-	 *
-	 * @param assetEditor The AssetEdtior of the Tab.
-	 * @param event       The event. May be consumed.
+	 * 
+	 * @param assetEditor
+	 *            The AssetEdtior of the Tab.
+	 * @param event
+	 *            The event. May be consumed.
 	 */
 	private void onEditorTabCloseRequest(final AssetEditor assetEditor, final Event event) {
 		if (assetEditor.isDirty()) {
 			final Asset asset = assetEditor.getAsset();
-			final Action action = Dialogs.create().title(asset.assetTitleProperty().get()).message("The asset has beeen changed. Save changes to mod?").showConfirm();
+			final Action action = Dialogs.create().title(asset.assetTitleProperty().get())
+					.message("The asset has beeen changed. Save changes to mod?").showConfirm();
 
 			if (action == Dialog.Actions.CANCEL) {
 				event.consume();
@@ -184,7 +179,7 @@ public class MainViewController {
 				try {
 					assetManager.saveAsset(assetLocation, asset);
 				} catch (IOException e) {
-					e.printStackTrace(); //TODO: error message
+					e.printStackTrace(); // TODO: error message
 					event.consume();
 				}
 			} else if (action == Dialog.Actions.NO && asset.getAssetLocation() != null) {
@@ -194,7 +189,7 @@ public class MainViewController {
 	}
 
 	private void saveAssetAs(final Asset asset) {
-		//if ()
+		// if ()
 	}
 
 	private void reloadAsset(final Asset asset) {
@@ -208,8 +203,9 @@ public class MainViewController {
 	private List<AssetType> readEditorTypes() {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			final List<AssetType> assetTypes = objectMapper.readValue(getClass().getResource("/base/editors.json"), new TypeReference<List<AssetType>>() {
-			});
+			final List<AssetType> assetTypes = objectMapper.readValue(
+					getClass().getResource("/de/perdoctus/starbound/base/editors.json"), new TypeReference<List<AssetType>>() {
+					});
 
 			return assetTypes;
 		} catch (IOException e) {
@@ -237,14 +233,14 @@ public class MainViewController {
 				objectMapper.readerForUpdating(settings).readValue(SETTINGS_FILE);
 			} catch (IOException e) {
 				e.printStackTrace();
-				throw new RuntimeException(e); //TODO: Handle
+				throw new RuntimeException(e); // TODO: Handle
 			}
 		}
 	}
 
 	private void loadStarboundVersions() {
 		//final URL remoteSbVersionsURL = new URL(STARBOUND_VERSIONS_SOURCE);
-		final URL remoteSbVersionsURL = getClass().getResource("/base/starbound-versions.json"); // FIXME: s.o.
+		final URL remoteSbVersionsURL = getClass().getResource("/de/perdoctus/starbound/base/starbound-versions.json"); // FIXME: s.o.
 		final JsonDownloadTask<StarboundVersion[]> task = new JsonDownloadTask<>(remoteSbVersionsURL, StarboundVersion[].class);
 
 		ProgressDialog.getInstance().execute(task);
@@ -310,7 +306,7 @@ public class MainViewController {
 			try {
 				final Settings settings = mapper.readValue(SETTINGS_FILE, Settings.class);
 				if (settings.getStarboundHome() != null) {
-//					model.setSettings(settings);
+					// model.setSettings(settings);
 					settingsLoaded();
 				} else {
 					forceSettings();
@@ -330,7 +326,8 @@ public class MainViewController {
 	}
 
 	private void forceSettings() {
-		final Action action = Dialogs.create().owner(tabPane.getScene().getWindow()).message("First startup: Setup the editor now?").showConfirm();
+		final Action action = Dialogs.create().owner(tabPane.getScene().getWindow())
+				.message("First startup: Setup the editor now?").showConfirm();
 		if (action == Dialog.Actions.YES) {
 			showSettingsDialog(true);
 		} else {
@@ -347,7 +344,7 @@ public class MainViewController {
 	}
 
 	public void closeActiveEditor(ActionEvent actionEvent) {
-//		closeEditor();
+		// closeEditor();
 	}
 
 	public void mnuShowSettingsDialog() {
@@ -389,14 +386,11 @@ public class MainViewController {
 	}
 
 	public void exitApplication() {
-		//TODO: Check unsaved files
+		// TODO: Check unsaved files
 		Platform.exit();
 	}
 
 	public void showCreateModDialog(ActionEvent actionEvent) {
-//		ModDialog.create(tabPane.getScene().getWindow()).show();
-
-		final Asset asset = model.getAssets().get(0);
-		model.getAssets().add(asset);
+		ModDialog.create(tabPane.getScene().getWindow()).show();
 	}
 }

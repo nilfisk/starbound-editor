@@ -3,8 +3,6 @@ package de.perdoctus.starbound.base.dialogs;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
@@ -43,7 +41,7 @@ public class ProgressDialog {
 	});
 
 	private ProgressDialog() {
-		final FXMLLoader loader = new FXMLLoader(getClass().getResource("/base/ProgressDialog.fxml"));
+		final FXMLLoader loader = new FXMLLoader(getClass().getResource("/de/perdoctus/starbound/base/ProgressDialog.fxml"));
 		final Parent progressDialogView;
 		try {
 			loader.setController(this);

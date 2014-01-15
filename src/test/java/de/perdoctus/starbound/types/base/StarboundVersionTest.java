@@ -13,7 +13,7 @@ public class StarboundVersionTest {
 	@Test
 	public void testStarboundVersionDeserialization() throws Exception {
 		final ObjectMapper objectMapper = new ObjectMapper();
-		final URL resource = getClass().getResource("/base/starbound-versions.json");
+		final URL resource = getClass().getResource("/de/perdoctus/starbound/base/starbound-versions.json");
 
 		// Test, if mapping works.
 		objectMapper.readValue(resource, StarboundVersion[].class);

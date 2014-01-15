@@ -25,7 +25,7 @@ public class StarboundEditor extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		final FXMLLoader loader = new FXMLLoader(getClass().getResource("/base/MainView.fxml"), ResourceBundle.getBundle("base.base"));
+		final FXMLLoader loader = new FXMLLoader(getClass().getResource("/de/perdoctus/starbound/base/MainView.fxml"), ResourceBundle.getBundle("de.perdoctus.starbound.base.base"));
 		final Parent root = loader.load();
 		final MainViewController controller = loader.getController();
 		primaryStage.setTitle("Starbound Editor");

@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 /**
- * A base implementation for Asset-Editors.
+ * A de.perdoctus.starbound.base implementation for Asset-Editors.
  *
  * @author Christoph Giesche
  */

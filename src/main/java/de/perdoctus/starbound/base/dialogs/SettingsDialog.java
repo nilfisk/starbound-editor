@@ -32,7 +32,7 @@ public class SettingsDialog extends DefaultController<Settings> {
 	private SettingsDialog(final File settingsFile) {
 		super();
 
-		final FXMLLoader loader = new FXMLLoader(getClass().getResource("/base/Settings.fxml"), ResourceBundle.getBundle("base.base"));
+		final FXMLLoader loader = new FXMLLoader(getClass().getResource("/de/perdoctus/starbound/base/Settings.fxml"), ResourceBundle.getBundle("de.perdoctus.starbound.base.base"));
 		loader.setController(this);
 
 		final Parent view;

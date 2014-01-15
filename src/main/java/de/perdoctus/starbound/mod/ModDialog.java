@@ -3,7 +3,6 @@ package de.perdoctus.starbound.mod;
 import de.perdoctus.starbound.base.ApplicationContext;
 import de.perdoctus.starbound.types.base.ModInfo;
 import de.perdoctus.starbound.types.base.StarboundVersion;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
@@ -13,7 +12,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Window;
-import javafx.util.StringConverter;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 
@@ -38,7 +36,7 @@ public class ModDialog {
 	private ResourceBundle dialogResourceBundle;
 
 	private ModDialog(final Window owner) {
-		this.dialogResourceBundle = ResourceBundle.getBundle("mod.createmod");
+		this.dialogResourceBundle = ResourceBundle.getBundle("de.perdoctus.starbound.mod.createmod");
 		this.dialog = new Dialog(owner, "foo", false, true);
 	}
 
@@ -47,7 +45,7 @@ public class ModDialog {
 	}
 
 	private Node loadDialogContent() {
-		final FXMLLoader loader = new FXMLLoader(getClass().getResource("/mod/createmod.fxml"), dialogResourceBundle);
+		final FXMLLoader loader = new FXMLLoader(getClass().getResource("/de/perdoctus/starbound/mod/createmod.fxml"), dialogResourceBundle);
 		loader.setController(this);
 		try {
 			return loader.load();
