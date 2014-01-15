@@ -1,0 +1,10 @@
+[
+    {
+        "version": "Angry Coala",
+        "current": true
+    },
+    {
+        "version": "Fluffy Coala",
+        "current": false
+    }
+]
