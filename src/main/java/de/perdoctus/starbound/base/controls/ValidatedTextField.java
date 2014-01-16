@@ -1,10 +1,7 @@
 package de.perdoctus.starbound.base.controls;
 
-import java.util.List;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.scene.control.TextField;
 
 /**
@@ -12,26 +9,68 @@ import javafx.scene.control.TextField;
  */
 public class ValidatedTextField extends TextField {
 
-	private final BooleanProperty					valid	= new SimpleBooleanProperty();
-	private final List<Validator<StringProperty>>	validators;
+	private final BooleanProperty valid     = new SimpleBooleanProperty();
+	private       IntegerProperty minLength = new SimpleIntegerProperty(0);
+	private       IntegerProperty maxLength = new SimpleIntegerProperty(Integer.MAX_VALUE);
+	private       StringProperty  regexp    = new SimpleStringProperty();
 
-	public ValidatedTextField(final List<Validator<StringProperty>> validators) {
+	public ValidatedTextField() {
 		super();
-		this.validators = validators;
-		initValidators();
+		initValidation();
 	}
 
-	public ValidatedTextField(final String text, final List<Validator<StringProperty>> validators) {
+	public ValidatedTextField(final String text) {
 		super(text);
-		this.validators = validators;
-		initValidators();
+		initValidation();
 	}
 
-	private void initValidators() {
-		BooleanBinding binding = textProperty().isNotEmpty();
-		for (final Validator<StringProperty> validator : validators) {
-			binding = binding.and(validator.validate(textProperty()));
-		}
-		valid.bind(binding);
+	private void initValidation() {
+		final BooleanBinding length = textProperty().length().greaterThanOrEqualTo(minLength).and(textProperty().length().lessThanOrEqualTo(maxLength));
+		final BooleanBinding regexpBinding = new RegexBinding(textProperty(), regexp);
+		valid.bind(length.and(regexpBinding));
+	}
+
+	public int getMinLength() {
+		return minLength.get();
+	}
+
+	public void setMinLength(int minLength) {
+		this.minLength.set(minLength);
+	}
+
+	public IntegerProperty minLengthProperty() {
+		return minLength;
+	}
+
+	public int getMaxLength() {
+		return maxLength.get();
+	}
+
+	public void setMaxLength(int maxLength) {
+		this.maxLength.set(maxLength);
+	}
+
+	public IntegerProperty maxLengthProperty() {
+		return maxLength;
+	}
+
+	public String getRegexp() {
+		return regexp.get();
+	}
+
+	public StringProperty regexpProperty() {
+		return regexp;
+	}
+
+	public void setRegexp(String regexp) {
+		this.regexp.set(regexp);
+	}
+
+	public boolean isValid() {
+		return valid.get();
+	}
+
+	public ReadOnlyBooleanProperty validProperty() {
+		return valid;
 	}
 }
