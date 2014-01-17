@@ -1,17 +1,11 @@
 package de.perdoctus.starbound.base;
 
-import com.sun.org.apache.bcel.internal.classfile.Code;
 import de.perdoctus.starbound.base.dialogs.ProgressDialog;
 import de.perdoctus.starbound.base.dialogs.SettingsDialog;
-import de.perdoctus.starbound.mod.ModDialog;
 import de.perdoctus.starbound.types.base.*;
-import de.perdoctus.starbound.types.codex.Codex;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringExpression;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -28,12 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * @author Christoph Giesche
@@ -81,12 +71,7 @@ public class MainViewController {
 		TODO: Event! ========================================================================
 		Modwechsel findet bisher noch direkt statt. Dies wird das neue Vorgehen.
 		 */
-		model.activeModProperty().addListener(new ChangeListener<Mod>() {
-			@Override
-			public void changed(final ObservableValue<? extends Mod> observableValue, final Mod mod, final Mod mod2) {
-				log.fine("Active Mod changed: " + mod2);
-			}
-		});
+		model.activeModProperty().addListener((observableValue, oldValue, newValue) -> activeModChanged(newValue));
 
 		applicationContext.getSettings().starboundHomeProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -107,6 +92,16 @@ public class MainViewController {
 
 		this.availableAssetTypes = readEditorTypes();
 		rebuildNewMenu();
+	}
+
+	private void activeModChanged(final Mod newValue) {
+		if (newValue != null) {
+			rescanModDirectory(newValue.getModLocation());
+			lblStatus.setText("Active mod: " + newValue.getModInfo().getName());
+		} else {
+			model.getAssets().removeIf(asset -> asset.getAssetOrigin() == AssetOrigin.MOD);
+			lblStatus.setText("No active mod.");
+		}
 	}
 
 	private void rebuildNewMenu() {
@@ -208,10 +203,8 @@ public class MainViewController {
 	private List<AssetType> readEditorTypes() {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			final List<AssetType> assetTypes = objectMapper.readValue(getClass().getResource("/base/editors.json"), new TypeReference<List<AssetType>>() {
+			return objectMapper.readValue(getClass().getResource("/base/editors.json"), new TypeReference<List<AssetType>>() {
 			});
-
-			return assetTypes;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -267,12 +260,12 @@ public class MainViewController {
 	}
 
 	private void rebuildModsMenu(final List<Mod> value) {
-		changeActiveMod(null);
+		model.activeModProperty().setValue(null);
 		mnuMods.getItems().clear();
 
 		final RadioMenuItem nullMod = new RadioMenuItem("None");
 		nullMod.setMnemonicParsing(false);
-		nullMod.setOnAction(event -> changeActiveMod(null));
+		nullMod.setOnAction(event -> model.activeModProperty().setValue(null));
 		nullMod.setToggleGroup(tgMods);
 		nullMod.setSelected(true);
 		mnuMods.getItems().add(nullMod);
@@ -287,20 +280,10 @@ public class MainViewController {
 		radioMenuItem.setToggleGroup(tgMods);
 		radioMenuItem.setOnAction(event -> {
 			if (radioMenuItem.isSelected()) {
-				changeActiveMod(mod);
+				model.activeModProperty().setValue(mod);
 			}
 		});
 		mnuMods.getItems().add(radioMenuItem);
-	}
-
-	private void changeActiveMod(final Mod mod) {
-		model.activeModProperty().setValue(mod);
-
-		if (mod != null) {
-			rescanModDirectory(mod.getModLocation());
-		} else {
-			model.getAssets().removeIf(asset -> asset.getAssetOrigin() == AssetOrigin.MOD);
-		}
 	}
 
 	@Deprecated
@@ -362,7 +345,7 @@ public class MainViewController {
 	}
 
 	private void rescanCoreAssetsDirectory() {
-		final boolean b = model.getAssets().removeIf(asset -> asset.getAssetOrigin() == AssetOrigin.CORE);
+		model.getAssets().removeIf(asset -> asset.getAssetOrigin() == AssetOrigin.CORE);
 
 		final File coreAssetsDirectory = new File(applicationContext.getSettings().getStarboundHome() + File.separatorChar + ASSETS_FOLDER);
 		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(coreAssetsDirectory, availableAssetTypes);
@@ -371,7 +354,7 @@ public class MainViewController {
 	}
 
 	private void rescanModDirectory(final File modDirectory) {
-		final boolean b = model.getAssets().removeIf(asset -> asset.getAssetOrigin() == AssetOrigin.MOD);
+		model.getAssets().removeIf(asset -> asset.getAssetOrigin() == AssetOrigin.MOD);
 
 		final SupportedAssetsScanTask supportedAssetsScanTask = new SupportedAssetsScanTask(modDirectory, availableAssetTypes);
 		supportedAssetsScanTask.setOnSucceeded(event -> availableModAssetsChanged(supportedAssetsScanTask.getValue()));
