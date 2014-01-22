@@ -4,6 +4,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import de.perdoctus.starbound.base.controls.ValidatedTextField?>
 
 <BorderPane fx:id="rootPane" prefHeight="443.0" prefWidth="421.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <bottom>
@@ -18,12 +19,12 @@
     </HBox>
   </bottom>
   <center>
-    <GridPane gridLinesVisible="true" hgap="5.0" vgap="5.0">
+    <GridPane hgap="5.0" vgap="5.0">
       <children>
         <Label text="%settings.starboundHome" />
         <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
           <children>
-            <TextField fx:id="txtStarboundDir" />
+            <ValidatedTextField fx:id="txtStarboundDir" minLength="4" maxLength="10" />
             <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showBrowseSbDir" text="%settings.browsedir" />
           </children>
         </HBox>

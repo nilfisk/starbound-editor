@@ -17,14 +17,12 @@ public class ValidatedTextFieldTest extends Application {
 
 	@BeforeClass
 	public static void initJFX() {
-
 		final Thread thread = new Thread() {
 			@Override
 			public void run() {
 				Application.launch(ValidatedTextFieldTest.class);
 			}
 		};
-
 		thread.start();
 	}
 
