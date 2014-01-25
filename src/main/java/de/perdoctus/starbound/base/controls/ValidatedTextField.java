@@ -2,8 +2,6 @@ package de.perdoctus.starbound.base.controls;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -21,8 +19,7 @@ public class ValidatedTextField extends TextField {
     private StringProperty regexp = new SimpleStringProperty();
 
     public ValidatedTextField() {
-        super();
-        initValidation();
+        this("");
     }
 
     public ValidatedTextField(final String text) {
@@ -35,14 +32,11 @@ public class ValidatedTextField extends TextField {
         final BooleanBinding regexpBinding = new RegexBinding(textProperty(), regexp);
         valid.bind(length.and(regexpBinding));
 
-        valid.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-                if (newValue) {
-                    setEffect(null);
-                } else {
-                    setEffect(invalidEffect.get());
-                }
+        valid.addListener((observableValue, oldValue, newValue) -> {
+            if (newValue) {
+                setEffect(null);
+            } else {
+                setEffect(invalidEffect.get());
             }
         });
     }

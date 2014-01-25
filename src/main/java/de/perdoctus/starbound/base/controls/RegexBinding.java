@@ -4,7 +4,7 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ObservableStringValue;
 
 /**
- * @author Christoph Giesche (extern)
+ * @author Christoph Giesche
  */
 public class RegexBinding extends BooleanBinding {
 
