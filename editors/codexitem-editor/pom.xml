@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.perdoctus.starbound.asseteditor.editors</groupId>
-    <artifactId>codex-editor</artifactId>
+    <artifactId>codexitem-editor</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>Starbound Asset Editor - Codex Editor</name>
+    <name>Starbound Asset Editor - CodexItem Editor</name>
 
     <parent>
         <groupId>de.perdoctus.starbound.asseteditor</groupId>

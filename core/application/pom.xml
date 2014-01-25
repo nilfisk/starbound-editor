@@ -15,4 +15,12 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
+    <dependencies>
+        <dependency>
+            <groupId>de.perdoctus.starbound.asseteditor.core</groupId>
+            <artifactId>editor-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 </project>
