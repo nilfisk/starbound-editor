@@ -1,20 +1,15 @@
 package de.perdoctus.starbound.codex;
 
 import de.perdoctus.starbound.base.AssetEditor;
-import de.perdoctus.starbound.base.DefaultController;
 import de.perdoctus.starbound.types.codex.Codex;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
-
-import java.io.IOException;
 
 /**
  * @author Christoph Giesche
@@ -54,18 +49,15 @@ public class CodexEditor extends AssetEditor<Codex> {
 				};
 			}
 		});
-		lstPages.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<StringProperty>() {
-			@Override
-			public void changed(final ObservableValue<? extends StringProperty> observableValue, final StringProperty valueBefore, final StringProperty valueNow) {
-				final boolean wasDirty = isDirty();
-				if (valueBefore != null) {
-					txtPageContent.textProperty().unbindBidirectional(valueBefore);
-				}
-				if (valueNow != null) {
-					txtPageContent.textProperty().bindBidirectional(valueNow);
-				}
-				setDirty(wasDirty);
+		lstPages.getSelectionModel().selectedItemProperty().addListener((observableValue, valueBefore, valueNow) -> {
+			final boolean wasDirty = isDirty();
+			if (valueBefore != null) {
+				txtPageContent.textProperty().unbindBidirectional(valueBefore);
 			}
+			if (valueNow != null) {
+				txtPageContent.textProperty().bindBidirectional(valueNow);
+			}
+			setDirty(wasDirty);
 		});
 
 		lstPages.getSelectionModel().selectFirst();

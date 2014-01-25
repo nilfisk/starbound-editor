@@ -2,7 +2,6 @@ package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
 import de.perdoctus.starbound.types.base.AssetType;
-import de.perdoctus.starbound.types.base.utils.FileUtils;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -49,8 +48,8 @@ public class AssetManager {
 
 	/**
 	 * Reloads the given asset from disk.
+	 *
 	 * @param asset The asset to reload.
-	 * @return The reloaded asset.
 	 */
 	public void reloadAsset(final Asset asset) throws IOException {
 		objectMapper.readerForUpdating(asset).readValue(asset.getAssetLocation());
@@ -58,6 +57,7 @@ public class AssetManager {
 
 	/**
 	 * Loads the {@link de.perdoctus.starbound.types.base.Asset} for the given file.
+	 *
 	 * @param assetFile The file to load the asset from.
 	 * @return The {@link de.perdoctus.starbound.types.base.Asset} or {@code null} if not compatible.
 	 */
@@ -70,7 +70,7 @@ public class AssetManager {
 		try {
 			assetClass = Class.forName(assetAssetType.getAssetClass());
 		} catch (ClassNotFoundException e) {
-            e.printStackTrace();
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 

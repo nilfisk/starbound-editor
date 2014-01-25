@@ -20,7 +20,7 @@ public abstract class Asset {
 	private AssetType assetType;
 	private ObjectProperty<File> assetLocation = new SimpleObjectProperty<>(null);
 	private AssetOrigin assetOrigin = AssetOrigin.UNKNOWN;
-	private BooleanProperty overwritten =  new SimpleBooleanProperty(false);
+	private BooleanProperty overwritten = new SimpleBooleanProperty(false);
 
 	/**
 	 * @return A human readable title for this asset.

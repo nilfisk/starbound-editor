@@ -7,6 +7,6 @@ import javafx.beans.binding.BooleanBinding;
  */
 public abstract class Validator<T> {
 
-    public abstract BooleanBinding validate(T value);
+	public abstract BooleanBinding validate(T value);
 
 }

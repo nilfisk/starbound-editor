@@ -12,17 +12,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Settings {
 
-    private StringProperty starboundHome = new SimpleStringProperty();
+	private StringProperty starboundHome = new SimpleStringProperty();
 
-    public String getStarboundHome() {
-        return starboundHome.get();
-    }
+	public String getStarboundHome() {
+		return starboundHome.get();
+	}
 
-    public void setStarboundHome(final String starboundHome) {
-        this.starboundHome.set(starboundHome);
-    }
+	public void setStarboundHome(final String starboundHome) {
+		this.starboundHome.set(starboundHome);
+	}
 
-    public StringProperty starboundHomeProperty() {
-        return starboundHome;
-    }
+	public StringProperty starboundHomeProperty() {
+		return starboundHome;
+	}
 }

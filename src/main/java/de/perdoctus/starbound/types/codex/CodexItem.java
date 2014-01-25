@@ -5,7 +5,6 @@ import de.perdoctus.starbound.types.base.Asset;
 import de.perdoctus.starbound.types.common.Rarity;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.ReadOnlyStringProperty;
 
 /**
  * @author Christoph Giesche

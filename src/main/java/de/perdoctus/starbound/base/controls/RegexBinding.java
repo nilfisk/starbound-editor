@@ -8,8 +8,8 @@ import javafx.beans.value.ObservableStringValue;
  */
 public class RegexBinding extends BooleanBinding {
 
-	private final ObservableStringValue	stringValue;
-	private final ObservableStringValue	patternValue;
+	private final ObservableStringValue stringValue;
+	private final ObservableStringValue patternValue;
 
 	public RegexBinding(final ObservableStringValue stringValue, final ObservableStringValue patternValue) {
 		this.stringValue = stringValue;

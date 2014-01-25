@@ -22,96 +22,96 @@ import java.util.ResourceBundle;
  */
 public class SettingsDialog extends DefaultController<Settings> {
 
-    private final Stage settingsStage;
-    private boolean settingsChanged = false;
-    @FXML
-    private TextField txtStarboundDir;
-    @FXML
-    private BorderPane rootPane;
+	private final Stage settingsStage;
+	private boolean settingsChanged = false;
+	@FXML
+	private TextField txtStarboundDir;
+	@FXML
+	private BorderPane rootPane;
 
-    private SettingsDialog(final File settingsFile) {
-        super();
+	private SettingsDialog(final File settingsFile) {
+		super();
 
-        final FXMLLoader loader = new FXMLLoader(getClass().getResource("/de/perdoctus/starbound/base/Settings.fxml"), ResourceBundle.getBundle("de.perdoctus.starbound.base.base"));
-        loader.setController(this);
+		final FXMLLoader loader = new FXMLLoader(getClass().getResource("/de/perdoctus/starbound/base/Settings.fxml"), ResourceBundle.getBundle("de.perdoctus.starbound.base.base"));
+		loader.setController(this);
 
-        final Parent view;
-        try {
-            view = loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		final Parent view;
+		try {
+			view = loader.load();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
-        settingsStage = new Stage();
-        final Scene settingsScene = new Scene(view);
-        settingsStage.setScene(settingsScene);
-        settingsStage.initModality(Modality.APPLICATION_MODAL);
+		settingsStage = new Stage();
+		final Scene settingsScene = new Scene(view);
+		settingsStage.setScene(settingsScene);
+		settingsStage.initModality(Modality.APPLICATION_MODAL);
 
-        if (settingsFile.exists()) {
-            load(settingsFile);
-        } else {
-            save(settingsFile);
-        }
-    }
+		if (settingsFile.exists()) {
+			load(settingsFile);
+		} else {
+			save(settingsFile);
+		}
+	}
 
-    public static SettingsDialog create(final File settingsFile) {
-        return new SettingsDialog(settingsFile);
-    }
+	public static SettingsDialog create(final File settingsFile) {
+		return new SettingsDialog(settingsFile);
+	}
 
-    @FXML
-    private void initialize() {
-        txtStarboundDir.textProperty().addListener(this);
-    }
+	@FXML
+	private void initialize() {
+		txtStarboundDir.textProperty().addListener(this);
+	}
 
-    @Override
-    protected Class<Settings> getModelClass() {
-        return Settings.class;
-    }
+	@Override
+	protected Class<Settings> getModelClass() {
+		return Settings.class;
+	}
 
-    @Override
-    protected void modelChanged(final Settings oldModel, final Settings newModel) {
-        if (oldModel != null) {
-            txtStarboundDir.textProperty().unbindBidirectional(oldModel.starboundHomeProperty());
-        }
-        txtStarboundDir.textProperty().bindBidirectional(newModel.starboundHomeProperty());
-    }
+	@Override
+	protected void modelChanged(final Settings oldModel, final Settings newModel) {
+		if (oldModel != null) {
+			txtStarboundDir.textProperty().unbindBidirectional(oldModel.starboundHomeProperty());
+		}
+		txtStarboundDir.textProperty().bindBidirectional(newModel.starboundHomeProperty());
+	}
 
-    public SettingsDialog owner(final Window owner) {
-        settingsStage.initOwner(owner);
-        settingsStage.initModality(Modality.WINDOW_MODAL);
-        return this;
-    }
+	public SettingsDialog owner(final Window owner) {
+		settingsStage.initOwner(owner);
+		settingsStage.initModality(Modality.WINDOW_MODAL);
+		return this;
+	}
 
-    /**
-     * Shows the Settings-Dialog.
-     *
-     * @return If settings were changed.
-     */
-    public boolean show() {
-        settingsStage.showAndWait();
-        return settingsChanged;
-    }
+	/**
+	 * Shows the Settings-Dialog.
+	 *
+	 * @return If settings were changed.
+	 */
+	public boolean show() {
+		settingsStage.showAndWait();
+		return settingsChanged;
+	}
 
-    public void saveSettings() {
-        if (isDirty()) {
-            save();
-            settingsChanged = true;
-        }
-        closeDialog();
-    }
+	public void saveSettings() {
+		if (isDirty()) {
+			save();
+			settingsChanged = true;
+		}
+		closeDialog();
+	}
 
-    public void closeDialog() {
-        settingsStage.close();
-    }
+	public void closeDialog() {
+		settingsStage.close();
+	}
 
-    @FXML
-    private void showBrowseSbDir() {
-        final DirectoryChooser directoryChooser = new DirectoryChooser();
-        final File selectedDirectory = directoryChooser.showDialog(rootPane.getScene().getWindow());
+	@FXML
+	private void showBrowseSbDir() {
+		final DirectoryChooser directoryChooser = new DirectoryChooser();
+		final File selectedDirectory = directoryChooser.showDialog(rootPane.getScene().getWindow());
 
-        if (selectedDirectory != null) {
-            txtStarboundDir.textProperty().setValue(selectedDirectory.getAbsolutePath());
-        }
-    }
+		if (selectedDirectory != null) {
+			txtStarboundDir.textProperty().setValue(selectedDirectory.getAbsolutePath());
+		}
+	}
 
 }

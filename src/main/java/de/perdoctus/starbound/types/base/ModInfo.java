@@ -1,6 +1,5 @@
 package de.perdoctus.starbound.types.base;
 
-import java.util.List;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -9,6 +8,7 @@ import javafx.collections.FXCollections;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.List;
 
 /**
  * @author Christoph Giesche
@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class ModInfo {
 
-	private StringProperty			name			= new SimpleStringProperty();
-	private StringProperty			version			= new SimpleStringProperty();
-	private StringProperty			path			= new SimpleStringProperty();
-	private ListProperty<String>	dependencies	= new SimpleListProperty<>();
+	private StringProperty name = new SimpleStringProperty();
+	private StringProperty version = new SimpleStringProperty();
+	private StringProperty path = new SimpleStringProperty();
+	private ListProperty<String> dependencies = new SimpleListProperty<>();
 
 	public String getName() {
 		return name.get();

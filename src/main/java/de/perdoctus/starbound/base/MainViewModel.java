@@ -1,19 +1,11 @@
 package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Asset;
-import de.perdoctus.starbound.types.base.AssetOrigin;
 import de.perdoctus.starbound.types.base.Mod;
-import de.perdoctus.starbound.types.base.Settings;
-import de.perdoctus.starbound.types.base.utils.FileUtils;
-import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-
-import java.io.File;
 
 /**
  * @author Christoph Giesche

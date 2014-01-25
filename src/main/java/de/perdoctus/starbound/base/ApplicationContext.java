@@ -2,7 +2,8 @@ package de.perdoctus.starbound.base;
 
 import de.perdoctus.starbound.types.base.Settings;
 import de.perdoctus.starbound.types.base.StarboundVersion;
-import javafx.beans.property.*;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
