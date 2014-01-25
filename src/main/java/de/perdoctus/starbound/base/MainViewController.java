@@ -137,7 +137,7 @@ public class MainViewController {
 
 			final Object castedAsset = assetClass.cast(asset);
 			assetEditor = (AssetEditor) constructor.newInstance(castedAsset);
-//			assetEditor.disableProperty().bind(model.activeModProperty().isNull());
+			assetEditor.disableProperty().bind(model.activeModProperty().isNull());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
