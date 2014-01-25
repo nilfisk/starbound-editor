@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.*?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
+            fx:controller="de.perdoctus.starbound.base.MainViewController">
+    <children>
+        <BorderPane prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <bottom>
+                <HBox prefWidth="200.0" spacing="5.0" style="-fx-background-color: lightgrey;">
+                    <children>
+                        <Label fx:id="lblStatus" text="Status"/>
+                    </children>
+                    <padding>
+                        <Insets bottom="2.0" left="5.0" right="5.0" top="2.0"/>
+                    </padding>
+                    <BorderPane.margin>
+                        <Insets/>
+                    </BorderPane.margin>
+                </HBox>
+            </bottom>
+            <center>
+                <SplitPane dividerPositions="0.3294314381270903" focusTraversable="true" prefHeight="160.0"
+                           prefWidth="200.0">
+                    <items>
+                        <VBox id="VBox" fx:id="vBoxNavigation" alignment="CENTER" spacing="0.0">
+                            <children>
+                                <TreeView fx:id="tvAssets" prefHeight="-1.0" prefWidth="-1.0" showRoot="false"
+                                          VBox.vgrow="ALWAYS"/>
+                            </children>
+                        </VBox>
+                        <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE"/>
+                    </items>
+                </SplitPane>
+            </center>
+            <top>
+                <MenuBar>
+                    <menus>
+                        <Menu mnemonicParsing="false" text="File">
+                            <items>
+                                <Menu mnemonicParsing="false" text="New" fx:id="mnuNew"/>
+                                <MenuItem mnemonicParsing="false" onAction="#showOpenFileDialog" text="Open">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem disable="true" mnemonicParsing="false" onAction="#saveCurrentEditorTab"
+                                          text="Save" fx:id="mnuSave">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem disable="true" mnemonicParsing="false" text="Save as...">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="DOWN" code="S" control="DOWN" meta="DOWN" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem disable="true" mnemonicParsing="false" text="Close All">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="DOWN" code="W" control="DOWN" meta="UP" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
+                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                <MenuItem mnemonicParsing="false" onAction="#mnuShowSettingsDialog"
+                                          text="Settings ..."/>
+                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                <MenuItem mnemonicParsing="false" onAction="#exitApplication" text="Exit"/>
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Mods">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#showCreateModDialog" text="Create Mod"/>
+                                <Menu mnemonicParsing="false" text="Existing Mods" fx:id="mnuMods"/>
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+            </top>
+        </BorderPane>
+    </children>
+</AnchorPane>

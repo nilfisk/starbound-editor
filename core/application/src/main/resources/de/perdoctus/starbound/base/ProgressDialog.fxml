@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="80.0" prefWidth="467.0" style="-fx-border-width: 2px; -fx-border-color: #000077;"
+            xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+    <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="467.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <ProgressIndicator fx:id="progressBar" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="50.0"
+                                   progress="-1.0">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" top="10.0"/>
+                    </HBox.margin>
+                </ProgressIndicator>
+                <VBox alignment="CENTER_LEFT" disable="false" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label fx:id="lblStatusMessage" text="What does the fox say">
+                            <font>
+                                <Font name="System Bold" size="15.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="lblStatusDetails" alignment="CENTER" contentDisplay="CENTER" prefWidth="-1.0"
+                               text="Ring ding ding dign digading." textOverrun="LEADING_ELLIPSIS" wrapText="false"/>
+                        <Label fx:id="lblTasks" labelFor="$lblStatusDetails" minHeight="-1.0" text="Label"
+                               underline="false" visible="true"/>
+                    </children>
+                    <HBox.margin>
+                        <Insets left="10.0" right="10.0"/>
+                    </HBox.margin>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>
